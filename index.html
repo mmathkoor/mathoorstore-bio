@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>مذكور ستور | Mathkoor Store</title>
+    
+    <!-- معلومات السيو (SEO) والمشاركة -->
+    <meta name="description" content="مذكور ستور يسعد بخدمتكم - روابط التطبيق، وسائل التواصل الاجتماعي، وموقعنا.">
+    <meta name="theme-color" content="#ff8c00">
+    <meta property="og:title" content="مذكور ستور | Mathkoor Store">
+    <meta property="og:image" content="https://cdn-b.heylink.me/media/users/avatars/81cc2bc9a2dd4b8a8b563b4e13e601dc.webp">
+    
+    <!-- خطوط جوجل (Cairo) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- أيقونات FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- مكتبة Tailwind CSS للتصميم -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- إعدادات Tailwind لتناسب ألوان هويتك -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            500: '#ffac1b', // اللون الأساسي من موقعك القديم
+                            600: '#ff8c00',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* تأثيرات النمط الزجاجي وتخصيصات الحركات */
+        body {
+            background: linear-gradient(135deg, #ff8c00 0%, #ffac1b 50%, #f59e0b 100%);
+            background-attachment: fixed;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .link-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px) scale(1.02);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+        }
+
+        /* حركات الدخول (Animation) */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* تأخير الحركات لظهور الأزرار بالتتابع */
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .delay-6 { animation-delay: 0.6s; }
+        .delay-7 { animation-delay: 0.7s; }
+
+        /* دوائر الخلفية التجميلية */
+        .bg-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body class="font-cairo text-white min-h-screen relative overflow-x-hidden selection:bg-white selection:text-brand-600">
+
+    <!-- أشكال الخلفية الجمالية -->
+    <div class="bg-shape w-96 h-96 bg-yellow-300 top-[-10%] left-[-10%]"></div>
+    <div class="bg-shape w-80 h-80 bg-red-400 bottom-[10%] right-[-10%]"></div>
+
+    <!-- الحاوية الرئيسية -->
+    <main class="max-w-md mx-auto px-5 py-10 relative z-10 flex flex-col items-center min-h-screen">
+        
+        <!-- قسم زر المشاركة أعلى الصفحة -->
+        <div class="w-full flex justify-end animate-fade-in-up">
+            <button onclick="shareProfile()" class="glass-panel w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors" title="مشاركة الصفحة">
+                <i class="fa-solid fa-share-nodes text-lg"></i>
+            </button>
+        </div>
+
+        <!-- قسم الملف الشخصي -->
+        <header class="flex flex-col items-center mt-2 mb-8 animate-fade-in-up delay-1 text-center w-full">
+            <div class="relative">
+                <!-- صورة البروفايل -->
+                <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white/40 shadow-xl mb-4">
+                    <img src="https://cdn-b.heylink.me/media/users/avatars/81cc2bc9a2dd4b8a8b563b4e13e601dc.webp" 
+                         alt="مذكور ستور" 
+                         class="w-full h-full object-cover">
+                </div>
+                <!-- علامة التحقق (اختيارية كنوع من التوثيق البصري) -->
+                <div class="absolute bottom-4 left-0 bg-blue-500 rounded-full w-7 h-7 flex items-center justify-center border-2 border-white shadow-md">
+                    <i class="fa-solid fa-check text-white text-xs"></i>
+                </div>
+            </div>
+            
+            <h1 class="text-2xl font-bold tracking-wide drop-shadow-md">@mathkoorstore</h1>
+            <p class="text-white/90 text-sm mt-2 font-semibold bg-black/20 px-4 py-1.5 rounded-full inline-block backdrop-blur-sm">
+                مذكور ستور يسعد بخدمتكم ✨
+            </p>
+        </header>
+
+        <!-- قائمة الروابط -->
+        <div class="w-full space-y-3 mb-10">
+            
+            <!-- رابط 1: موقع الويب -->
+            <a href="https://app.yrbso.net/yrt/home?mathkoor" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-2 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-globe"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">موقع الويب</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 2: التطبيق -->
+            <a href="https://play.google.com/store/apps/details?id=com.mathkoorst.yrbso" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-2 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                    <i class="fa-brands fa-google-play"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">تطبيق الأندرويد</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 3: الفيس بوك -->
+            <a href="https://m.facebook.com/mathkoorstore/" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-3 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform text-[#1877F2]">
+                    <i class="fa-brands fa-facebook"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">صفحة الفيس بوك الرسمية</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 3: الانستجرام -->
+            <a href="https://www.instagram.com/mathkoorstor" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-4 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform text-[#E4405F]">
+                    <i class="fa-brands fa-instagram"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">انستجرام</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 4: قناة الواتس اب -->
+            <a href="https://whatsapp.com/channel/0029VaCTy4j11ulJA57QSG1T" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-5 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform text-[#25D366]">
+                    <i class="fa-brands fa-whatsapp"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">قناة الواتس اب</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 5: مجتمع الواتس اب -->
+            <a href="https://chat.whatsapp.com/FLwb7ZmFV8zKQrzDkoZAhh" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-6 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform text-[#128C7E]">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">مجتمع مذكور ستور</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 6: الكتالوج -->
+            <a href="https://wa.me/c/967773925550" target="_blank" rel="noopener noreferrer" 
+               class="link-card glass-panel w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-7 group">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform text-yellow-300">
+                    <i class="fa-solid fa-store"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">كتالوج مذكور ستور</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+            <!-- رابط 7: البريد الإلكتروني (بتصميم مميز قليلاً) -->
+            <a href="mailto:mathkoorstore@gmail.com" 
+               class="link-card bg-gradient-to-r from-red-600 to-red-500 border border-red-400 shadow-lg w-full flex items-center p-4 rounded-2xl animate-fade-in-up delay-7 group mt-4">
+                <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl group-hover:scale-110 transition-transform text-white">
+                    <i class="fa-regular fa-envelope"></i>
+                </div>
+                <div class="flex-grow px-4 text-lg font-bold text-center">تواصل عبر الإيميل</div>
+                <div class="w-8 opacity-50"><i class="fa-solid fa-chevron-left"></i></div>
+            </a>
+
+        </div>
+
+        <!-- قسم الخريطة والموقع -->
+        <div class="w-full glass-panel rounded-2xl overflow-hidden animate-fade-in-up delay-7 mb-8">
+            <div class="bg-black/20 p-3 text-center font-bold flex justify-center items-center gap-2">
+                <i class="fa-solid fa-location-dot text-red-500"></i> موقعنا
+            </div>
+            <!-- الخريطة (تم تعديل الرابط ليعمل بدون مفتاح API) -->
+            <iframe
+                width="100%"
+                height="200"
+                style="border:0;" 
+                loading="lazy"
+                allowfullscreen
+                src="https://maps.google.com/maps?q=15.367363,44.172578&hl=ar&z=16&output=embed">
+            </iframe>
+            <a href="https://www.google.com/maps/@15.3673630,44.1725780,17z" target="_blank" class="block bg-brand-600 hover:bg-orange-700 transition-colors text-white text-center py-3 px-4 font-semibold text-sm">
+                شارع الستين الغربي جوار جامعة اليمن
+                <i class="fa-solid fa-arrow-up-right-from-square mr-1 text-xs"></i>
+            </a>
+        </div>
+
+        <!-- حقوق النشر (الفوتر) -->
+        <footer class="w-full text-center text-white/70 text-sm mt-auto pb-4 animate-fade-in-up delay-7">
+            <p>© <span id="year"></span> مذكور ستور. جميع الحقوق محفوظة.</p>
+        </footer>
+
+    </main>
+
+    <!-- سكربتات إضافية -->
+    <script>
+        // تحديث السنة التلقائي في الفوتر
+        document.getElementById('year').textContent = new Date().getFullYear();
+
+        // وظيفة المشاركة الذكية
+        function shareProfile() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'مذكور ستور | Mathkoor Store',
+                    text: 'تفضل بزيارة الروابط الرسمية لمذكور ستور',
+                    url: window.location.href
+                }).catch(console.error);
+            } else {
+                // بديل للأجهزة التي لا تدعم المشاركة المباشرة (نسخ الرابط)
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('تم نسخ رابط الصفحة بنجاح!');
+                });
+            }
+        }
+    </script>
+</body>
+</html>
