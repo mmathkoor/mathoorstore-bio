@@ -46,25 +46,20 @@
         .input-field::placeholder { color: rgba(255, 255, 255, 0.7); }
         .input-field:focus { outline: none; background: rgba(255, 255, 255, 0.3); border-color: rgba(255, 255, 255, 0.6); box-shadow: 0 0 10px rgba(255, 255, 255, 0.2); }
         
-        /* شاشة التحميل (Loader) */
         #page-loader { position: fixed; inset: 0; background: linear-gradient(135deg, #ff8c00 0%, #ffac1b 100%); z-index: 9999; flex-direction: column; display: flex; align-items: center; justify-content: center; transition: opacity 0.5s ease; }
         .spinner-loader { border: 4px solid rgba(255,255,255,0.3); width: 40px; height: 40px; border-radius: 50%; border-left-color: #fff; animation: spin 1s linear infinite; }
         
-        /* تقييم النجوم */
         .star-rating i { cursor: pointer; transition: color 0.2s; }
         .star-rating i:hover, .star-rating i.active { color: #fbbf24; }
 
-        /* زر العودة للأعلى */
         #btn-back-to-top { position: fixed; bottom: 20px; right: 20px; z-index: 50; display: none; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); width: 40px; height: 40px; border-radius: 50%; align-items: center; justify-content: center; cursor: pointer; transition: opacity 0.3s, transform 0.3s; opacity: 0; transform: translateY(20px); }
         #btn-back-to-top.show { opacity: 1; transform: translateY(0); display: flex; }
 
-        /* نافذة المشاركة المنبثقة (Modal) */
         #share-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000; justify-content: center; align-items: end; padding-bottom: 20px; opacity: 0; transition: opacity 0.3s; }
         #share-modal.show { display: flex; opacity: 1; }
         .share-modal-content { background: #fff; width: 100%; max-w: 400px; border-radius: 20px; padding: 20px; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         #share-modal.show .share-modal-content { transform: translateY(0); }
         
-        /* تنسيقات للكمبيوتر (Sticky Sidebar) */
         @media (min-width: 1024px) {
             .desktop-sticky { position: sticky; top: 2rem; }
         }
@@ -83,37 +78,53 @@
     <div class="bg-shape w-96 h-96 bg-yellow-300 top-[-10%] left-[-10%]"></div>
     <div class="bg-shape w-80 h-80 bg-red-400 bottom-[10%] right-[-10%]"></div>
 
-    <!-- الحاوية الرئيسية مقسمة لشبكة في الشاشات الكبيرة -->
-    <main class="max-w-6xl mx-auto px-4 sm:px-5 py-8 sm:py-10 relative z-10 flex flex-col lg:flex-row gap-8 min-h-screen">
-        
-        <!-- القسم الأيمن: الملف الشخصي والطلبات (ثابت في الكمبيوتر) -->
-        <div class="w-full lg:w-1/3 flex flex-col items-center desktop-sticky h-fit">
-            
-            <div class="w-full flex justify-end animate-fade-in-up lg:hidden mb-4">
-                <button onclick="openShareModal()" class="glass-panel w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors" title="مشاركة الصفحة">
-                    <i class="fa-solid fa-share-nodes text-lg"></i>
-                </button>
+    <!-- هيدر الجوال (يظهر فقط في الشاشات الصغيرة) في أعلى الصفحة -->
+    <header class="flex lg:hidden flex-col items-center mt-6 mb-2 animate-fade-in-up delay-1 text-center w-full px-5 relative z-10">
+        <div class="w-full flex justify-end mb-2 max-w-md mx-auto">
+            <button onclick="openShareModal()" class="glass-panel w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors" title="مشاركة الصفحة">
+                <i class="fa-solid fa-share-nodes text-lg"></i>
+            </button>
+        </div>
+        <div class="relative">
+            <div class="w-28 h-28 rounded-full overflow-hidden border-4 border-white/40 shadow-xl mb-4 bg-white mx-auto">
+                <img src="https://cdn-b.heylink.me/media/users/avatars/81cc2bc9a2dd4b8a8b563b4e13e601dc.webp" alt="مذكور ستور" class="w-full h-full object-cover">
             </div>
+            <div class="absolute bottom-4 left-1/2 transform -translate-x-12 bg-blue-500 rounded-full w-7 h-7 flex items-center justify-center border-2 border-white shadow-md">
+                <i class="fa-solid fa-check text-white text-xs"></i>
+            </div>
+        </div>
+        <h1 class="text-2xl font-bold tracking-wide drop-shadow-md">@mathkoorstore</h1>
+        <p class="text-white/90 text-sm mt-2 font-semibold bg-black/20 px-4 py-1.5 rounded-full inline-block backdrop-blur-sm">
+            مذكور ستور يسعد بخدمتكم ✨
+        </p>
+    </header>
 
-            <header class="flex flex-col items-center animate-fade-in-up delay-1 text-center w-full mb-8">
+    <main class="max-w-6xl mx-auto px-4 sm:px-5 py-4 lg:py-10 relative z-10 flex flex-col lg:flex-row gap-8 min-h-screen">
+        
+        <!-- القسم الأيمن في الكمبيوتر (يصبح في الأسفل في الجوال بفضل order-2) -->
+        <div class="w-full lg:w-1/3 flex flex-col items-center desktop-sticky h-fit order-2 lg:order-1">
+            
+            <!-- هيدر الكمبيوتر (مخفي في الجوال) يظهر في الأعلى على اليمين -->
+            <header class="hidden lg:flex flex-col items-center animate-fade-in-up delay-1 text-center w-full mb-8">
                 <div class="relative">
-                    <div class="w-28 h-28 lg:w-36 lg:h-36 rounded-full overflow-hidden border-4 border-white/40 shadow-xl mb-4 bg-white">
+                    <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-white/40 shadow-xl mb-4 bg-white">
                         <img src="https://cdn-b.heylink.me/media/users/avatars/81cc2bc9a2dd4b8a8b563b4e13e601dc.webp" alt="مذكور ستور" class="w-full h-full object-cover">
                     </div>
-                    <div class="absolute bottom-4 left-0 bg-blue-500 rounded-full w-7 h-7 lg:w-9 lg:h-9 flex items-center justify-center border-2 border-white shadow-md">
-                        <i class="fa-solid fa-check text-white text-xs lg:text-sm"></i>
+                    <div class="absolute bottom-4 left-0 bg-blue-500 rounded-full w-9 h-9 flex items-center justify-center border-2 border-white shadow-md">
+                        <i class="fa-solid fa-check text-white text-sm"></i>
                     </div>
                 </div>
-                <h1 class="text-2xl lg:text-3xl font-bold tracking-wide drop-shadow-md">@mathkoorstore</h1>
-                <p class="text-white/90 text-sm lg:text-base mt-2 font-semibold bg-black/20 px-4 py-1.5 rounded-full inline-block backdrop-blur-sm">
+                <h1 class="text-3xl font-bold tracking-wide drop-shadow-md">@mathkoorstore</h1>
+                <p class="text-white/90 text-base mt-2 font-semibold bg-black/20 px-4 py-1.5 rounded-full inline-block backdrop-blur-sm">
                     مذكور ستور يسعد بخدمتكم ✨
                 </p>
-                <button onclick="openShareModal()" class="hidden lg:flex mt-4 glass-panel px-6 py-2 rounded-full items-center justify-center hover:bg-white/30 transition-colors gap-2 text-sm font-bold">
-                    <i class="fa-solid fa-share-nodes"></i> مشاركة الملف الشخصي
+                <!-- زر مشاركة أنيق للكمبيوتر -->
+                <button onclick="openShareModal()" class="mt-4 glass-panel px-6 py-2 rounded-full flex items-center justify-center hover:bg-white/30 transition-colors gap-2 text-sm font-bold w-full max-w-[200px]">
+                    <i class="fa-solid fa-share-nodes"></i> مشاركة الصفحة
                 </button>
             </header>
 
-            <div class="w-full glass-panel rounded-2xl overflow-hidden animate-fade-in-up delay-7 mb-8 p-5 border-t-4 border-t-[#25D366]">
+            <div class="w-full glass-panel rounded-2xl overflow-hidden animate-fade-in-up delay-7 mb-8 p-5 border-t-4 border-t-[#25D366] max-w-md mx-auto">
                 <h2 class="text-xl font-bold mb-2 text-center text-white flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cart-shopping text-[#25D366]"></i> أرسل طلبك الآن
                 </h2>
@@ -138,13 +149,13 @@
                         <label class="block text-sm font-semibold mb-1 text-white/90">العنوان بالتفصيل <span class="text-red-400">*</span></label>
                         <textarea id="customerAddress" required placeholder="المدينة، الحي، أقرب مَعلم..." rows="2" class="w-full px-4 py-2.5 rounded-xl input-field text-sm font-semibold text-gray-800" style="color:#333;"></textarea>
                     </div>
-                    <button type="submit" class="w-full bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(37,211,102,0.4)] transform hover:-translate-y-1">
+                    <button type="submit" id="btnSubmitOrder" class="w-full bg-[#25D366] hover:bg-[#1ebd5a] text-white font-bold py-3.5 px-4 rounded-xl transition-all flex items-center justify-center gap-2 shadow-[0_4px_15px_rgba(37,211,102,0.4)] transform hover:-translate-y-1">
                         <i class="fa-brands fa-whatsapp text-xl"></i> إرسال الطلب
                     </button>
                 </form>
             </div>
 
-            <div class="w-full glass-panel rounded-2xl overflow-hidden animate-fade-in-up delay-7 mb-8 border border-white/20">
+            <div class="w-full glass-panel rounded-2xl overflow-hidden animate-fade-in-up delay-7 mb-8 border border-white/20 max-w-md mx-auto">
                 <div class="bg-black/30 p-3 text-center font-bold flex justify-center items-center gap-2"><i class="fa-solid fa-location-dot text-red-500"></i> موقعنا</div>
                 <iframe width="100%" height="200" style="border:0;" loading="lazy" allowfullscreen src="https://maps.google.com/maps?q=15.367363,44.172578&hl=ar&z=16&output=embed"></iframe>
                 <a href="https://www.google.com/maps/@15.3673630,44.1725780,17z" target="_blank" class="block bg-brand-600 hover:bg-orange-700 transition-colors text-white text-center py-3 px-4 font-semibold text-sm">
@@ -152,13 +163,14 @@
                 </a>
             </div>
 
+            <!-- فوتر الكمبيوتر -->
             <footer class="w-full text-center text-white/70 text-sm mt-auto pb-4 animate-fade-in-up delay-7 hidden lg:block">
                 <p>© <span id="year-desktop"></span> مذكور ستور. جميع الحقوق محفوظة.</p>
             </footer>
         </div>
 
-        <!-- القسم الأيسر: الروابط والمنتجات والفيديوهات -->
-        <div class="w-full lg:w-2/3 flex flex-col items-center">
+        <!-- القسم الأيسر في الكمبيوتر (يصبح في الأعلى في الجوال بفضل order-1) يحتوي على الروابط والمنتجات -->
+        <div class="w-full lg:w-2/3 flex flex-col items-center order-1 lg:order-2">
 
             <!-- الفيديو المميز -->
             <div id="featured-video-btn-container" class="w-full mb-8 animate-fade-in-up delay-2 hidden">
@@ -186,7 +198,6 @@
                 <h2 class="text-xl font-bold mb-4 flex items-center text-white/90">
                     <i class="fa-solid fa-crown text-yellow-400 ml-2"></i> منتجات مميزة
                 </h2>
-                <!-- في الجوال سحب، في الكمبيوتر شبكة متجاوبة -->
                 <div id="dynamic-products-container" class="flex overflow-x-auto lg:grid lg:grid-cols-3 gap-4 pb-2 snap-x hide-scrollbar">
                     <!-- سيتم إدراج المنتجات هنا -->
                 </div>
@@ -270,7 +281,6 @@
                 </a>
             </div>
 
-            <!-- التقييم -->
             <div id="review-section" class="w-full max-w-xl mx-auto glass-panel rounded-2xl overflow-hidden animate-fade-in-up delay-7 mb-8 p-5 border-t-4 border-t-yellow-400 hidden">
                 <h2 class="text-lg font-bold mb-2 text-center text-white flex items-center justify-center gap-2">
                     <i class="fa-solid fa-star text-yellow-400"></i> قيم تجربتك معنا
@@ -296,6 +306,7 @@
                 </form>
             </div>
 
+            <!-- فوتر الجوال -->
             <footer class="w-full text-center text-white/70 text-sm mt-auto pb-4 animate-fade-in-up delay-7 lg:hidden">
                 <p>© <span id="year-mobile"></span> مذكور ستور. جميع الحقوق محفوظة.</p>
             </footer>
@@ -307,7 +318,7 @@
         <i class="fa-solid fa-arrow-up text-white"></i>
     </div>
 
-    <!-- نافذة المشاركة المخصصة (Modal) -->
+    <!-- نافذة المشاركة المنبثقة (تعمل في كل الأجهزة) -->
     <div id="share-modal" onclick="closeShareModal(event)">
         <div class="share-modal-content max-w-sm" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-4 border-b pb-2">
@@ -326,6 +337,7 @@
         </div>
     </div>
 
+    <!-- رسالة النسخ الأنيقة -->
     <div id="toast"><i class="fa-solid fa-circle-check text-green-400 ml-2"></i> تم نسخ الرابط بنجاح!</div>
 
     <script>
@@ -333,9 +345,10 @@
         if(document.getElementById('year-desktop')) document.getElementById('year-desktop').textContent = year;
         if(document.getElementById('year-mobile')) document.getElementById('year-mobile').textContent = year;
         
-        // ⚠️ مهم: استبدل الرابط أدناه برابط الـ Web App الخاص بك من Google Apps Script
+        // ⚠️ مهم: استبدل الرابط أدناه برابط الـ Web App الخاص بك من Google Apps Script ⚠️
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuIKh_H3k3Ba8pqDNeftqwHmU32vywgZRTSEY6J6xEVvcjLdifHUJJO5Em5GGjcqoA/exec';
         
+        // البيانات الافتراضية
         let DEFAULT_SETTINGS = {
             wa_order: "967773925550", website: "https://app.yrbso.net/yrt/home?mathkoor",
             android: "https://play.google.com/store/apps/details?id=com.mathkoorst.yrbso", catalog: "https://wa.me/c/967773925550",
@@ -356,7 +369,9 @@
                         applySettings(data.data.settings);
                         if(data.data.products && data.data.products.length > 0) renderProducts(data.data.products);
                         if(data.data.videos && data.data.videos.length > 0) renderVideos(data.data.videos);
-                    } else { applySettings({}); }
+                    } else { 
+                        applySettings({}); 
+                    }
                     setupShareButtons();
                     handleAutoHiding(); // إخفاء الروابط الفارغة
                 })
@@ -375,7 +390,7 @@
                 });
             });
 
-            // زر العودة للأعلى
+            // إظهار وإخفاء زر العودة للأعلى
             window.addEventListener('scroll', () => {
                 const btn = document.getElementById('btn-back-to-top');
                 if (window.scrollY > 300) btn.classList.add('show');
@@ -388,8 +403,8 @@
             setTimeout(() => document.getElementById('page-loader').style.display = 'none', 500);
         }
 
-        // إخفاء الروابط الفارغة تلقائياً
         function handleAutoHiding() {
+            // إخفاء الأزرار الفارغة أو التي تحمل # فقط
             document.querySelectorAll('.auto-hide').forEach(function(link) {
                 var href = link.getAttribute('href');
                 if (!href || href === '#' || href.trim() === '') {
@@ -400,11 +415,10 @@
                     link.classList.remove('is-hidden');
                 }
             });
-            
-            // إخفاء قسم المنتجات بالكامل إذا لم يتبق أي منتج ظاهر (يتم تفعيله من دالة renderProducts)
         }
 
         function applySettings(serverSettings) {
+            // دمج الإعدادات الافتراضية مع القادمة من السيرفر
             const settings = { ...DEFAULT_SETTINGS, ...serverSettings };
             GLOBAL_WA_ORDER = settings.wa_order || DEFAULT_SETTINGS.wa_order;
             
@@ -455,8 +469,8 @@
                 if(p.link && p.link !== '#' && p.link.trim() !== '') {
                     visibleCount++;
                     container.innerHTML += `
-                        <a href="${p.link}" target="_blank" class="snap-center shrink-0 w-36 lg:w-auto bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl overflow-hidden flex flex-col group hover:bg-white/20 transition-all">
-                            <div class="h-32 w-full overflow-hidden bg-white flex items-center justify-center">
+                        <a href="${p.link}" target="_blank" class="snap-center shrink-0 w-36 lg:w-auto lg:min-w-[120px] bg-white/10 border border-white/20 backdrop-blur-md rounded-2xl overflow-hidden flex flex-col group hover:bg-white/20 transition-all">
+                            <div class="h-32 lg:h-36 w-full overflow-hidden bg-white flex items-center justify-center">
                                 <img src="${p.image}" onerror="this.src='https://placehold.co/150x150/ff4444/ffffff?text=لا+توجد+صورة'" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" alt="${p.name}">
                             </div>
                             <div class="p-3 text-center overflow-hidden">
@@ -475,14 +489,19 @@
             const section = document.getElementById('dynamic-videos-section');
             const container = document.getElementById('dynamic-videos-container');
             container.innerHTML = '';
+            let hasVideos = false;
             videos.forEach(v => {
-                container.innerHTML += `
-                    <div class="glass-panel w-full p-2 rounded-2xl overflow-hidden shadow-lg">
-                        <iframe class="w-full h-56 rounded-xl bg-black" src="${v.embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                `;
+                if(v.embedUrl && v.embedUrl.trim() !== ''){
+                    hasVideos = true;
+                    container.innerHTML += `
+                        <div class="glass-panel w-full p-2 rounded-2xl overflow-hidden shadow-lg">
+                            <iframe class="w-full h-56 rounded-xl bg-black" src="${v.embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    `;
+                }
             });
-            section.classList.remove('hidden');
+            if(hasVideos) section.classList.remove('hidden');
+            else section.classList.add('hidden');
         }
 
         function submitReview(event) {
@@ -512,23 +531,36 @@
             const phone = document.getElementById('customerPhone').value;
             const address = document.getElementById('customerAddress').value;
             
-            // إرسال لجوجل شيت بصمت
+            const btn = document.getElementById('btnSubmitOrder');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin text-xl"></i> جاري التجهيز...';
+            btn.disabled = true;
+            
+            // إرسال لجوجل شيت
             const orderData = { product, quantity: qty, phone, address, date: new Date().toLocaleString('ar-EG') };
             const formData = new URLSearchParams();
             formData.append('action', 'addOrder');
             formData.append('data', JSON.stringify(orderData));
-            fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' });
+            
+            fetch(SCRIPT_URL, { method: 'POST', body: formData, mode: 'no-cors' }).then(()=>{
+                // فتح الواتساب
+                let waNumber = GLOBAL_WA_ORDER.replace(/^0+/, ''); 
+                if(!waNumber.startsWith('967')) waNumber = '967' + waNumber;
 
-            // فتح الواتساب
-            let waNumber = GLOBAL_WA_ORDER.replace(/^0+/, ''); 
-            if(!waNumber.startsWith('967')) waNumber = '967' + waNumber;
-
-            const msg = `مرحباً مذكور ستور 👋\nأود تسجيل طلب جديد:\n\n🛒 *المنتج:* ${product}\n📦 *الكمية:* ${qty}\n📍 *العنوان:* ${address}\n📞 *الرقم:* ${phone}\n\nأرجو التأكيد، شكراً لكم.`;
-            window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
-            document.getElementById('orderForm').reset();
+                const msg = `مرحباً مذكور ستور 👋\nأود تسجيل طلب جديد:\n\n🛒 *المنتج:* ${product}\n📦 *الكمية:* ${qty}\n📍 *العنوان:* ${address}\n📞 *الرقم:* ${phone}\n\nأرجو التأكيد، شكراً لكم.`;
+                window.open(`https://wa.me/${waNumber}?text=${encodeURIComponent(msg)}`, '_blank');
+                
+                document.getElementById('orderForm').reset();
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }).catch(()=>{
+                 btn.innerHTML = originalHtml;
+                 btn.disabled = false;
+                 alert('حدث خطأ في الاتصال، يرجى المحاولة مرة أخرى.');
+            });
         }
 
-        // ================= نظام المشاركة الذكي والمخصص =================
+        // ================= نظام المشاركة =================
         function showToast() {
             var toast = document.getElementById("toast");
             toast.className = "show";
@@ -549,7 +581,6 @@
             } else { fallbackCopyText(url); }
         }
 
-        // نافذة المشاركة المنبثقة
         const shareModal = document.getElementById('share-modal');
         function openShareModal() { shareModal.classList.add('show'); }
         function closeShareModal(event) { 
@@ -573,7 +604,6 @@
             closeShareModal();
         }
 
-        // إعداد أزرار المشاركة الصغيرة لكل رابط
         function setupShareButtons() {
             document.querySelectorAll('.share-btn').forEach(btn => {
                 btn.onclick = function(e) {
@@ -584,7 +614,7 @@
                     if(targetUrl.startsWith('mailto:')) {
                         copyLink(targetUrl.replace('mailto:', ''));
                     } else {
-                        copyLink(targetUrl); // تم توحيدها لتعمل بالنسخ فقط لتجنب مشاكل المتصفحات
+                        copyLink(targetUrl);
                     }
                 }
             });
