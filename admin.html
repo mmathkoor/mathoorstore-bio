@@ -4,180 +4,365 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>لوحة تحكم | مذكور ستور</title>
-    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     
+    <!-- مكتبة SheetJS لتصدير Excel احترافي -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { cairo: ['Cairo', 'sans-serif'] },
-                    colors: { brand: { 500: '#ffac1b', 600: '#ff8c00' } }
-                }
-            }
-        }
+        tailwind.config = { theme: { extend: { fontFamily: { cairo: ['Cairo', 'sans-serif'] }, colors: { brand: { 500: '#ffac1b', 600: '#ff8c00' } } } } }
     </script>
     <style>
         body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; }
         .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #ff8c00; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        #toast-msg {
-            visibility: hidden;
-            min-width: 250px;
-            color: #fff;
-            text-align: center;
-            border-radius: 8px;
-            padding: 12px 20px;
-            position: fixed;
-            z-index: 1000;
-            left: 50%;
-            bottom: 30px;
-            transform: translateX(-50%);
-            font-size: 14px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            opacity: 0;
-            transition: opacity 0.3s, bottom 0.3s, visibility 0.3s;
-        }
+        #toast-msg { visibility: hidden; min-width: 250px; color: #fff; text-align: center; border-radius: 8px; padding: 12px 20px; position: fixed; z-index: 1000; left: 50%; bottom: 30px; transform: translateX(-50%); font-size: 14px; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s, bottom 0.3s, visibility 0.3s; }
         #toast-msg.show { visibility: visible; opacity: 1; bottom: 50px; }
-        .tab-btn.active { border-bottom: 4px solid #ff8c00; color: #ff8c00; }
+        .tab-btn.active { border-bottom: 4px solid #ff8c00; color: #ff8c00; background-color: #fff3e0;}
         .tab-content { display: none; }
         .tab-content.active { display: block; }
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800">
 
-    <nav class="bg-white shadow-md px-6 py-4 flex flex-col md:flex-row justify-between items-center border-b-4 border-brand-500 gap-4">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-white text-2xl shadow-md">
-                <i class="fa-solid fa-store"></i>
+    <div id="login-screen" class="fixed inset-0 bg-gray-900 bg-opacity-95 z-50 flex items-center justify-center">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-sm text-center">
+            <div class="w-20 h-20 bg-brand-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg text-white text-4xl">
+                <i class="fa-solid fa-lock"></i>
             </div>
-            <div>
-                <h1 class="font-bold text-2xl leading-tight">مذكور ستور</h1>
-                <p class="text-sm text-gray-500 font-semibold">إدارة النظام والمنتجات</p>
-            </div>
+            <h2 class="text-2xl font-bold mb-2">تسجيل الدخول</h2>
+            <p class="text-gray-500 text-sm mb-6">لوحة تحكم مذكور ستور</p>
+            <input type="password" id="password-input" placeholder="أدخل كلمة المرور" class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-center text-lg focus:border-brand-500 focus:outline-none mb-4" dir="ltr">
+            <button onclick="checkPassword()" class="w-full bg-brand-600 hover:bg-orange-700 text-white font-bold py-3 rounded-xl transition-all shadow-md">دخول</button>
+            <p id="login-error" class="text-red-500 text-sm mt-3 hidden font-bold">كلمة المرور غير صحيحة!</p>
         </div>
-        
-        <div class="flex bg-gray-50 rounded-lg p-1 border border-gray-200">
-            <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn active px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100">
-                <i class="fa-solid fa-inbox ml-1"></i> الطلبات الواردة
-            </button>
-            <button onclick="switchTab('products')" id="tab-products" class="tab-btn px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100">
-                <i class="fa-solid fa-crown ml-1"></i> إدارة المنتجات
-            </button>
-        </div>
-    </nav>
+    </div>
 
-    <main class="max-w-6xl mx-auto p-6">
-        
-        <!-- قسم الطلبات -->
-        <div id="content-orders" class="tab-content active bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h2 class="font-bold text-lg"><i class="fa-solid fa-box-open text-brand-500"></i> أحدث الطلبات المستلمة</h2>
-                <div class="flex items-center gap-3">
-                    <span class="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full" id="ordersCount">0 طلب</span>
-                    <button onclick="fetchOrders()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm transition-colors">
-                        <i class="fa-solid fa-rotate"></i> تحديث
-                    </button>
+    <div id="dashboard-wrapper" class="hidden">
+        <nav class="bg-white shadow-md px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center border-b-4 border-brand-500 gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-white text-2xl shadow-md"><i class="fa-solid fa-store"></i></div>
+                <div>
+                    <h1 class="font-bold text-xl md:text-2xl leading-tight">مذكور ستور</h1>
+                    <p class="text-xs md:text-sm text-gray-500 font-semibold">نظام إدارة المحتوى (CMS)</p>
                 </div>
             </div>
             
-            <div class="p-6">
-                <div id="loadingState" class="flex flex-col items-center justify-center py-10">
-                    <div class="spinner mb-4"></div>
-                    <p class="text-gray-500 font-semibold text-sm">جاري الجلب من قاعدة البيانات...</p>
-                </div>
-
-                <div id="emptyState" class="text-center py-10 hidden">
-                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400 text-2xl"><i class="fa-solid fa-inbox"></i></div>
-                    <h3 class="font-bold text-gray-700">لا توجد طلبات بعد</h3>
-                </div>
-
-                <div class="overflow-x-auto hidden" id="ordersTableContainer">
-                    <table class="w-full text-sm text-right">
-                        <thead class="bg-gray-100 text-gray-600 font-bold">
-                            <tr>
-                                <th class="px-4 py-3 rounded-tr-lg">التاريخ والوقت</th>
-                                <th class="px-4 py-3">المنتج والكمية</th>
-                                <th class="px-4 py-3">رقم العميل</th>
-                                <th class="px-4 py-3">العنوان</th>
-                                <th class="px-4 py-3 rounded-tl-lg text-center">تواصل</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ordersTableBody" class="divide-y divide-gray-200">
-                        </tbody>
-                    </table>
-                </div>
+            <div class="flex bg-gray-50 rounded-lg p-1 border border-gray-200 overflow-x-auto w-full md:w-auto">
+                <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn active whitespace-nowrap px-4 md:px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100 text-sm md:text-base">
+                    <i class="fa-solid fa-inbox ml-1"></i> الطلبات
+                </button>
+                <button onclick="switchTab('reviews')" id="tab-reviews" class="tab-btn whitespace-nowrap px-4 md:px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100 text-sm md:text-base">
+                    <i class="fa-solid fa-star ml-1 text-yellow-500"></i> التقييمات
+                </button>
+                <button onclick="switchTab('products')" id="tab-products" class="tab-btn whitespace-nowrap px-4 md:px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100 text-sm md:text-base">
+                    <i class="fa-solid fa-crown ml-1"></i> المنتجات
+                </button>
+                <button onclick="switchTab('videos')" id="tab-videos" class="tab-btn whitespace-nowrap px-4 md:px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100 text-sm md:text-base">
+                    <i class="fa-brands fa-youtube ml-1"></i> الفيديوهات
+                </button>
+                <button onclick="switchTab('settings')" id="tab-settings" class="tab-btn whitespace-nowrap px-4 md:px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100 text-sm md:text-base">
+                    <i class="fa-solid fa-gear ml-1"></i> الإعدادات
+                </button>
             </div>
-        </div>
+        </nav>
 
-        <!-- قسم المنتجات -->
-        <div id="content-products" class="tab-content">
+        <main class="max-w-7xl mx-auto p-4 md:p-6">
             
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- إضافة منتج جديد -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
-                    <h2 class="font-bold text-lg mb-4"><i class="fa-solid fa-plus text-brand-500"></i> إضافة منتج للصفحة</h2>
-                    <form id="addProductForm" onsubmit="addProduct(event)" class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">اسم المنتج *</label>
-                            <input type="text" id="p_name" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">السعر (نصي) *</label>
-                            <input type="text" id="p_price" required placeholder="مثال: 15,000 ريال" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">رابط الصورة (URL) *</label>
-                            <input type="url" id="p_img" required placeholder="https://..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
-                            <p class="text-xs text-gray-500 mt-1">يجب أن يكون رابط مباشر للصورة.</p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">رابط عند الضغط *</label>
-                            <input type="url" id="p_url" required placeholder="رابط الواتساب أو المتجر..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
-                        </div>
-                        <button type="submit" class="w-full bg-brand-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg transition-colors">
-                            إضافة للقائمة
+            <div id="content-orders" class="tab-content active bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="font-bold text-lg"><i class="fa-solid fa-box-open text-brand-500"></i> أحدث الطلبات المستلمة</h2>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full" id="ordersCount">0 طلب</span>
+                        <button onclick="exportToExcel('orders')" class="bg-[#107c41] hover:bg-green-800 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel"></i> تصدير Excel
                         </button>
-                    </form>
+                        <button onclick="loadInitialData()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm transition-colors"><i class="fa-solid fa-rotate"></i> تحديث</button>
+                    </div>
                 </div>
+                
+                <div class="p-6">
+                    <div id="loadingState" class="flex flex-col items-center justify-center py-10">
+                        <div class="spinner mb-4"></div>
+                        <p class="text-gray-500 font-semibold text-sm">جاري الجلب من قاعدة البيانات...</p>
+                    </div>
 
-                <!-- قائمة المنتجات الحالية -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="font-bold text-lg"><i class="fa-solid fa-list text-brand-500"></i> المنتجات التي ستظهر في البايو</h2>
-                        <button onclick="saveProductsToDatabase()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
-                            <i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر للتطبيق
+                    <div id="emptyState" class="text-center py-10 hidden">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400 text-2xl"><i class="fa-solid fa-inbox"></i></div>
+                        <h3 class="font-bold text-gray-700">لا توجد طلبات بعد</h3>
+                    </div>
+
+                    <div class="overflow-x-auto hidden" id="ordersTableContainer">
+                        <table class="w-full text-sm text-right">
+                            <thead class="bg-gray-100 text-gray-600 font-bold">
+                                <tr>
+                                    <th class="px-4 py-3 rounded-tr-lg">التاريخ والوقت</th>
+                                    <th class="px-4 py-3">المنتج والكمية</th>
+                                    <th class="px-4 py-3">رقم العميل</th>
+                                    <th class="px-4 py-3">العنوان</th>
+                                    <th class="px-4 py-3 rounded-tl-lg text-center">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ordersTableBody" class="divide-y divide-gray-200"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-reviews" class="tab-content bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                    <h2 class="font-bold text-lg"><i class="fa-solid fa-comments text-yellow-500"></i> آراء وتقييمات العملاء</h2>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-blue-100 text-blue-700 text-sm font-bold px-3 py-1 rounded-full" id="reviewsCount">0 تقييم</span>
+                        <button onclick="exportToExcel('reviews')" class="bg-[#107c41] hover:bg-green-800 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm transition-colors flex items-center gap-1">
+                            <i class="fa-solid fa-file-excel"></i> تصدير Excel
+                        </button>
+                        <button onclick="loadReviewsData()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm transition-colors"><i class="fa-solid fa-rotate"></i> تحديث</button>
+                    </div>
+                </div>
+                
+                <div class="p-6">
+                    <div id="loadingStateReviews" class="flex flex-col items-center justify-center py-10 hidden">
+                        <div class="spinner mb-4"></div>
+                        <p class="text-gray-500 font-semibold text-sm">جاري الجلب...</p>
+                    </div>
+
+                    <div id="emptyStateReviews" class="text-center py-10 hidden">
+                        <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400 text-2xl"><i class="fa-regular fa-star"></i></div>
+                        <h3 class="font-bold text-gray-700">لا توجد تقييمات بعد</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 hidden" id="reviewsContainer">
+                        <!-- سيتم إدراج التقييمات هنا -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-products" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- الإضافة / التعديل -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
+                        <h2 class="font-bold text-lg mb-4 flex items-center justify-between">
+                            <span id="product-form-title"><i class="fa-solid fa-plus text-brand-500"></i> إضافة منتج</span>
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500" id="products-counter">0/5</span>
+                        </h2>
+                        <p class="text-xs text-gray-500 mb-4">الحد الأقصى للمنتجات المميزة هو 5 منتجات للحفاظ على سرعة وأناقة الصفحة.</p>
+                        <form id="addProductForm" onsubmit="submitProductForm(event)" class="space-y-4">
+                            <input type="hidden" id="p_id" value="">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">اسم المنتج *</label>
+                                <input type="text" id="p_name" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">السعر (نصي) *</label>
+                                <input type="text" id="p_price" required placeholder="مثال: 15,000 ريال" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط الصورة (URL) *</label>
+                                <input type="url" id="p_img" required placeholder="https://..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط عند الضغط (الشراء) *</label>
+                                <input type="url" id="p_url" required placeholder="رابط الواتساب أو الموقع..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" id="btn-add-product" class="w-full bg-brand-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg transition-colors">إضافة للقائمة</button>
+                                <button type="button" id="btn-cancel-edit-product" onclick="cancelEditProduct()" class="hidden w-1/3 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition-colors">إلغاء</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- العرض -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="font-bold text-lg"><i class="fa-solid fa-list text-brand-500"></i> المنتجات في البايو</h2>
+                            <button onclick="saveData('saveProducts', currentProducts)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر للتطبيق
+                            </button>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-4 rounded text-sm text-blue-800">
+                            <strong>ملاحظة هامة:</strong> عند إجراء أي إضافة، حذف، أو تعديل للمنتجات، يجب عليك الضغط على زر <strong>(حفظ ونشر للتطبيق)</strong> ليتم تطبيق التغييرات فعلياً وإرسالها لقاعدة البيانات.
+                        </div>
+                        <div id="productsList" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                        <div id="noProducts" class="text-center py-10 text-gray-500 hidden font-semibold">لا توجد منتجات مضافة.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-videos" class="tab-content">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
+                        <h2 class="font-bold text-lg mb-4 flex items-center justify-between">
+                            <span id="video-form-title"><i class="fa-solid fa-video text-brand-500"></i> إضافة فيديو</span>
+                            <span class="text-xs bg-gray-100 px-2 py-1 rounded text-gray-500" id="videos-counter">0/2</span>
+                        </h2>
+                        <p class="text-xs text-gray-500 mb-4">الحد الأقصى هو 2 فيديوهات (يوتيوب) لكي لا تصبح الصفحة ثقيلة جداً.</p>
+                        <form id="addVideoForm" onsubmit="submitVideoForm(event)" class="space-y-4">
+                            <input type="hidden" id="v_id" value="">
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط فيديو يوتيوب *</label>
+                                <input type="url" id="v_url" required placeholder="https://www.youtube.com/watch?v=..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
+                                <p class="text-xs text-red-500 mt-1">يجب أن يكون رابط يوتيوب صالح ليتم تضمينه.</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit" id="btn-add-video" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition-colors"><i class="fa-brands fa-youtube"></i> إضافة الفيديو</button>
+                                <button type="button" id="btn-cancel-edit-video" onclick="cancelEditVideo()" class="hidden w-1/3 bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 rounded-lg transition-colors">إلغاء</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <h2 class="font-bold text-lg"><i class="fa-solid fa-list text-brand-500"></i> الفيديوهات في البايو</h2>
+                            <button onclick="saveData('saveVideos', currentVideos)" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر للتطبيق
+                            </button>
+                        </div>
+                        <div class="bg-blue-50 border-l-4 border-blue-500 p-3 mb-4 rounded text-sm text-blue-800">
+                            <strong>ملاحظة هامة:</strong> لا تنس الضغط على <strong>(حفظ ونشر للتطبيق)</strong> بعد إضافة أو حذف فيديو.
+                        </div>
+                        <div id="videosList" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                        <div id="noVideos" class="text-center py-10 text-gray-500 hidden font-semibold">لا توجد فيديوهات مضافة.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="content-settings" class="tab-content">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="font-bold text-lg"><i class="fa-solid fa-link text-brand-500"></i> إعدادات الروابط (منصات التواصل)</h2>
+                        <button onclick="saveSettings()" class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> حفظ التعديلات
                         </button>
                     </div>
                     
-                    <div id="productsLoading" class="hidden flex-col items-center py-5">
-                        <div class="spinner mb-2"></div>
-                    </div>
+                    <p class="text-sm text-gray-600 mb-6 bg-yellow-50 p-3 rounded border border-yellow-200">
+                        ملاحظة: اترك الرابط فارغاً أو ضع الرمز <strong>#</strong> إذا أردت إخفاء الزر الخاص به من صفحة البايو بشكل ذكي وتلقائي.
+                    </p>
 
-                    <div id="productsList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- سيتم عرض المنتجات هنا -->
-                    </div>
-                    <div id="noProducts" class="text-center py-10 text-gray-500 hidden font-semibold">
-                        لا توجد منتجات مضافة. قم بإضافة منتجات من القائمة الجانبية ثم اضغط على حفظ ونشر.
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- إعدادات أساسية -->
+                        <div class="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-brand-600 border-b pb-2"><i class="fa-solid fa-store"></i> المتجر والطلبات</h3>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رقم واتساب استقبال الطلبات (بدون +)</label>
+                                <input type="text" id="set_wa_order" placeholder="967773925550" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                                <p class="text-xs text-gray-500 mt-1">هذا الرقم سيستقبل طلبات الفورمة في البايو.</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط موقع الويب</label>
+                                <input type="url" id="set_website" placeholder="https://app.yrbso.net/yrt/home?mathkoor" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط تطبيق الأندرويد</label>
+                                <input type="url" id="set_android" placeholder="https://play.google.com/..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط كتالوج الواتساب</label>
+                                <input type="url" id="set_catalog" placeholder="https://wa.me/c/..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                        </div>
+
+                        <!-- السوشيال ميديا -->
+                        <div class="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                            <h3 class="font-bold text-blue-600 border-b pb-2"><i class="fa-solid fa-hashtag"></i> منصات التواصل الاجتماعي</h3>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">فيسبوك</label>
+                                <input type="url" id="set_facebook" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">انستجرام</label>
+                                <input type="url" id="set_instagram" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">قناة الواتساب</label>
+                                <input type="url" id="set_wa_channel" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">مجتمع الواتساب (جروب)</label>
+                                <input type="url" id="set_wa_group" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">يوتيوب</label>
+                                <input type="url" id="set_youtube" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">سناب شات</label>
+                                <input type="url" id="set_snapchat" placeholder="#" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">تيك توك</label>
+                                <input type="url" id="set_tiktok" placeholder="#" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">إكس (تويتر)</label>
+                                <input type="url" id="set_x" placeholder="#" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">البريد الإلكتروني</label>
+                                <input type="email" id="set_email" placeholder="example@gmail.com" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                        </div>
+
+                        <!-- إعدادات إضافية -->
+                        <div class="space-y-4 bg-gray-50 p-4 rounded-lg border border-gray-200 md:col-span-2">
+                            <h3 class="font-bold text-green-600 border-b pb-2"><i class="fa-solid fa-star"></i> نظام التقييمات والملاحظات</h3>
+                            <div class="flex items-center justify-between bg-white p-3 rounded border border-gray-200">
+                                <div>
+                                    <p class="font-bold text-sm text-gray-800">تفعيل حقل التقييم في صفحة البايو</p>
+                                    <p class="text-xs text-gray-500">إذا تم تعطيله، سيختفي نموذج التقييم من صفحة العملاء.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="set_enable_reviews" class="sr-only peer" checked>
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-green-500"></div>
+                                </label>
+                            </div>
+                            
+                            <h3 class="font-bold text-purple-600 border-b pb-2 mt-6"><i class="fa-solid fa-fire"></i> روابط سريعة مميزة (Reels / TikTok Video)</h3>
+                            <p class="text-xs text-gray-500 mb-2">ضع هنا رابط فيديو مميز تريد توجيه الزوار إليه بقوة (سيظهر كزر نابض في البايو).</p>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">رابط الفيديو المميز (اختياري)</label>
+                                <input type="url" id="set_featured_video_url" placeholder="https://www.facebook.com/share/r/..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left" dir="ltr">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-gray-700 mb-1">نص الزر المميز</label>
+                                <input type="text" id="set_featured_video_text" placeholder="مثال: شاهد أحدث عروضنا 🔥" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm">
+                            </div>
+                        </div>
                     </div>
                 </div>
-
             </div>
-        </div>
 
-    </main>
+        </main>
+    </div>
 
     <div id="toast-msg"></div>
 
     <script>
-        // الرابط المضمن الخاص بك (لا تغيره)
+        const PASSWORD = "1234"; 
+        
+        // ⚠️ مهم جداً: استبدل الرابط أدناه بالرابط الجديد الخاص بك من Google Apps Script ⚠️
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuIKh_H3k3Ba8pqDNeftqwHmU32vywgZRTSEY6J6xEVvcjLdifHUJJO5Em5GGjcqoA/exec';
         
-        let currentProducts = []; // مصفوفة لتخزين المنتجات
+        let currentProducts = [];
+        let currentVideos = [];
+        let currentOrders = [];
+        let currentReviews = [];
+        const MAX_PRODUCTS = 5;
+        const MAX_VIDEOS = 2;
+
+        function checkPassword() {
+            const input = document.getElementById('password-input').value;
+            if(input === PASSWORD) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('dashboard-wrapper').classList.remove('hidden');
+                loadInitialData();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
 
         function showToast(msg, type = 'success') {
             const toast = document.getElementById('toast-msg');
@@ -194,33 +379,104 @@
             document.getElementById('content-' + tabId).classList.add('active');
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchOrders();
-            fetchProducts();
-        });
-
-        /* ---- قسم الطلبات ---- */
-        function fetchOrders() {
+        function loadInitialData() {
+            // جلب الطلبات
+            document.getElementById('loadingState').classList.remove('hidden');
             document.getElementById('emptyState').classList.add('hidden');
             document.getElementById('ordersTableContainer').classList.add('hidden');
-            document.getElementById('loadingState').classList.remove('hidden');
 
             fetch(`${SCRIPT_URL}?action=getOrders`)
                 .then(res => res.json())
                 .then(data => {
                     document.getElementById('loadingState').classList.add('hidden');
-                    if(data.status === 'success' && data.orders.length > 0) {
+                    if(data.status === 'success' && data.orders && data.orders.length > 0) {
+                        currentOrders = data.orders; // لحفظها للتصدير للإكسل
                         document.getElementById('ordersCount').innerText = `${data.orders.length} طلب`;
                         renderOrders(data.orders);
-                        document.getElementById('ordersTableContainer').classList.remove('hidden');
                     } else {
+                        currentOrders = [];
                         document.getElementById('ordersCount').innerText = `0 طلب`;
                         document.getElementById('emptyState').classList.remove('hidden');
                     }
-                }).catch(() => {
-                    document.getElementById('loadingState').classList.add('hidden');
-                    showToast('خطأ في الاتصال بقاعدة البيانات', 'error');
+                }).catch(() => { document.getElementById('loadingState').classList.add('hidden'); showToast('خطأ في جلب الطلبات', 'error'); });
+
+            // جلب التقييمات
+            loadReviewsData();
+
+            // جلب البيانات الأخرى (إعدادات، منتجات، فيديوهات)
+            fetch(`${SCRIPT_URL}?action=getAllData`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success') {
+                        currentProducts = data.data.products || [];
+                        renderProducts();
+                        
+                        currentVideos = data.data.videos || [];
+                        renderVideos();
+
+                        // ملء الإعدادات
+                        const s = data.data.settings || {};
+                        document.getElementById('set_wa_order').value = s.wa_order || '';
+                        document.getElementById('set_website').value = s.website || '';
+                        document.getElementById('set_android').value = s.android || '';
+                        document.getElementById('set_catalog').value = s.catalog || '';
+                        document.getElementById('set_facebook').value = s.facebook || '';
+                        document.getElementById('set_instagram').value = s.instagram || '';
+                        document.getElementById('set_wa_channel').value = s.wa_channel || '';
+                        document.getElementById('set_wa_group').value = s.wa_group || '';
+                        document.getElementById('set_youtube').value = s.youtube || '';
+                        document.getElementById('set_tiktok').value = s.tiktok || '';
+                        document.getElementById('set_snapchat').value = s.snapchat || '';
+                        document.getElementById('set_x').value = s.x || '';
+                        document.getElementById('set_email').value = s.email || '';
+                        document.getElementById('set_enable_reviews').checked = s.enable_reviews !== false;
+                        document.getElementById('set_featured_video_url').value = s.featured_video_url || '';
+                        document.getElementById('set_featured_video_text').value = s.featured_video_text || '';
+                    }
                 });
+        }
+
+        function loadReviewsData() {
+            document.getElementById('loadingStateReviews').classList.remove('hidden');
+            document.getElementById('emptyStateReviews').classList.add('hidden');
+            document.getElementById('reviewsContainer').classList.add('hidden');
+
+            fetch(`${SCRIPT_URL}?action=getReviews`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('loadingStateReviews').classList.add('hidden');
+                    if(data.status === 'success' && data.reviews && data.reviews.length > 0) {
+                        currentReviews = data.reviews; // للتصدير للإكسل
+                        document.getElementById('reviewsCount').innerText = `${data.reviews.length} تقييم`;
+                        renderReviews(data.reviews);
+                    } else {
+                        currentReviews = [];
+                        document.getElementById('reviewsCount').innerText = `0 تقييم`;
+                        document.getElementById('emptyStateReviews').classList.remove('hidden');
+                    }
+                }).catch(() => { document.getElementById('loadingStateReviews').classList.add('hidden'); showToast('خطأ في جلب التقييمات', 'error'); });
+        }
+
+        function renderReviews(reviews) {
+            const container = document.getElementById('reviewsContainer');
+            container.innerHTML = '';
+            reviews.forEach(review => {
+                let starsHtml = '';
+                for(let i=1; i<=5; i++) {
+                    starsHtml += `<i class="fa-solid fa-star ${i <= review.rating ? 'text-yellow-400' : 'text-gray-300'}"></i>`;
+                }
+                container.innerHTML += `
+                    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex justify-between items-start mb-2">
+                            <div class="text-sm font-bold text-gray-800">${review.name || 'عميل'}</div>
+                            <div class="text-xs text-gray-400" dir="ltr">${review.date || '-'}</div>
+                        </div>
+                        <div class="mb-2 text-sm">${starsHtml}</div>
+                        <p class="text-gray-600 text-sm whitespace-pre-wrap">${review.comment || 'لا توجد ملاحظة.'}</p>
+                    </div>
+                `;
+            });
+            container.classList.remove('hidden');
         }
 
         function renderOrders(orders) {
@@ -236,7 +492,7 @@
                         <div class="text-xs text-brand-600 font-bold bg-brand-50 inline-block px-2 py-0.5 rounded mt-1">الكمية: ${order.quantity || 1}</div>
                     </td>
                     <td class="px-4 py-4 font-bold text-gray-700" dir="ltr">${order.phone || '-'}</td>
-                    <td class="px-4 py-4 text-gray-600 max-w-xs truncate" title="${order.address || ''}">${order.address || '-'}</td>
+                    <td class="px-4 py-4 text-gray-600 text-xs whitespace-pre-wrap">${order.address || '-'}</td>
                     <td class="px-4 py-4 text-center">
                         <a href="https://wa.me/967${order.phone ? order.phone.replace(/^0+/, '') : ''}" target="_blank" class="text-[#25D366] bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors inline-flex items-center gap-1">
                             <i class="fa-brands fa-whatsapp"></i> تواصل
@@ -245,91 +501,342 @@
                 `;
                 tbody.appendChild(tr);
             });
+            document.getElementById('ordersTableContainer').classList.remove('hidden');
         }
 
-        /* ---- قسم المنتجات ---- */
-        function fetchProducts() {
-            fetch(`${SCRIPT_URL}?action=getProducts`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data.status === 'success' && data.products) {
-                        currentProducts = data.products;
-                        renderProducts();
-                    }
-                });
-        }
+        let editingProductId = null;
 
-        function addProduct(e) {
+        function submitProductForm(e) {
             e.preventDefault();
-            const product = {
-                id: Date.now(),
-                name: document.getElementById('p_name').value,
-                price: document.getElementById('p_price').value,
-                image: document.getElementById('p_img').value,
-                link: document.getElementById('p_url').value
-            };
-            currentProducts.push(product);
+            let imgUrl = document.getElementById('p_img').value;
+
+            if (editingProductId !== null) {
+                // تحديث منتج موجود
+                const index = currentProducts.findIndex(p => p.id === editingProductId);
+                if (index !== -1) {
+                    currentProducts[index] = {
+                        id: editingProductId,
+                        name: document.getElementById('p_name').value,
+                        price: document.getElementById('p_price').value,
+                        image: imgUrl,
+                        link: document.getElementById('p_url').value
+                    };
+                    showToast('تم تعديل المنتج، اضغط حفظ ونشر للتطبيق لتأكيد العملية');
+                }
+                cancelEditProduct();
+            } else {
+                // إضافة منتج جديد
+                if(currentProducts.length >= MAX_PRODUCTS) {
+                    showToast('وصلت للحد الأقصى للمنتجات (5)', 'error');
+                    return;
+                }
+                const product = {
+                    id: Date.now(),
+                    name: document.getElementById('p_name').value,
+                    price: document.getElementById('p_price').value,
+                    image: imgUrl,
+                    link: document.getElementById('p_url').value
+                };
+                currentProducts.push(product);
+                showToast('تمت إضافة المنتج، اضغط حفظ ونشر للتطبيق لتأكيد العملية');
+                document.getElementById('addProductForm').reset();
+            }
             renderProducts();
+        }
+
+        function editProduct(id) {
+            const product = currentProducts.find(p => p.id === id);
+            if (!product) return;
+
+            editingProductId = id;
+            document.getElementById('p_name').value = product.name;
+            document.getElementById('p_price').value = product.price;
+            document.getElementById('p_img').value = product.image;
+            document.getElementById('p_url').value = product.link;
+
+            document.getElementById('product-form-title').innerHTML = '<i class="fa-solid fa-pen text-blue-500"></i> تعديل منتج';
+            const btnAdd = document.getElementById('btn-add-product');
+            btnAdd.innerText = 'تحديث المنتج';
+            btnAdd.classList.replace('bg-brand-600', 'bg-blue-600');
+            btnAdd.classList.replace('hover:bg-orange-700', 'hover:bg-blue-700');
+            
+            document.getElementById('btn-cancel-edit-product').classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function cancelEditProduct() {
+            editingProductId = null;
             document.getElementById('addProductForm').reset();
-            showToast('تمت إضافة المنتج للقائمة، اضغط "حفظ ونشر" لتأكيد التغييرات.');
+            
+            document.getElementById('product-form-title').innerHTML = '<i class="fa-solid fa-plus text-brand-500"></i> إضافة منتج';
+            const btnAdd = document.getElementById('btn-add-product');
+            btnAdd.innerText = 'إضافة للقائمة';
+            btnAdd.classList.replace('bg-blue-600', 'bg-brand-600');
+            btnAdd.classList.replace('hover:bg-blue-700', 'hover:bg-orange-700');
+            
+            document.getElementById('btn-cancel-edit-product').classList.add('hidden');
+            renderProducts();
         }
 
         function removeProduct(id) {
-            currentProducts = currentProducts.filter(p => p.id !== id);
-            renderProducts();
+            if(confirm('هل أنت متأكد من حذف هذا المنتج؟\n\nتنبيه: بعد الحذف يجب عليك الضغط على زر "حفظ ونشر للتطبيق" لكي يتم حذفه من قاعدة البيانات.')) {
+                currentProducts = currentProducts.filter(p => p.id !== id);
+                if(editingProductId === id) cancelEditProduct();
+                renderProducts();
+                showToast('تم إزالة المنتج من القائمة (اضغط حفظ ونشر للتطبيق لتأكيد الحذف)', 'success');
+            }
         }
 
         function renderProducts() {
             const list = document.getElementById('productsList');
             const empty = document.getElementById('noProducts');
-            list.innerHTML = '';
+            const counter = document.getElementById('products-counter');
+            const btnAdd = document.getElementById('btn-add-product');
             
+            counter.innerText = `${currentProducts.length}/${MAX_PRODUCTS}`;
+            
+            if(editingProductId === null) {
+                btnAdd.disabled = currentProducts.length >= MAX_PRODUCTS;
+                if(btnAdd.disabled) btnAdd.classList.replace('bg-brand-600', 'bg-gray-400');
+                else btnAdd.classList.replace('bg-gray-400', 'bg-brand-600');
+            }
+
+            list.innerHTML = '';
             if(currentProducts.length === 0) {
                 empty.classList.remove('hidden');
                 return;
             }
-            
             empty.classList.add('hidden');
             currentProducts.forEach(p => {
+                const isEditing = p.id === editingProductId;
                 list.innerHTML += `
-                    <div class="border border-gray-200 rounded-lg p-3 flex gap-3 bg-gray-50 items-center">
-                        <img src="${p.image}" class="w-16 h-16 object-cover rounded-md border border-gray-300" onerror="this.src='https://placehold.co/150x150/eee/999?text=Error'">
-                        <div class="flex-grow">
-                            <h4 class="font-bold text-sm text-gray-800">${p.name}</h4>
+                    <div class="border ${isEditing ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'} rounded-lg p-3 flex gap-3 items-center transition-colors">
+                        <img src="${p.image}" class="w-16 h-16 object-cover rounded-md border border-gray-300" onerror="this.src='https://placehold.co/150x150/ff4444/ffffff?text=رابط+خطأ'">
+                        <div class="flex-grow overflow-hidden">
+                            <h4 class="font-bold text-sm text-gray-800 truncate">${p.name}</h4>
                             <p class="text-xs text-brand-600 font-bold">${p.price}</p>
                         </div>
-                        <button onclick="removeProduct(${p.id})" class="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title="حذف">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
+                        <div class="flex flex-col gap-1">
+                            <button onclick="editProduct(${p.id})" class="text-blue-500 hover:bg-blue-100 p-2 rounded-lg transition-colors text-sm" title="تعديل"><i class="fa-solid fa-pen"></i></button>
+                            <button onclick="removeProduct(${p.id})" class="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors text-sm" title="حذف"><i class="fa-solid fa-trash"></i></button>
+                        </div>
                     </div>
                 `;
             });
         }
 
-        function saveProductsToDatabase() {
-            const loading = document.getElementById('productsLoading');
-            loading.classList.remove('hidden');
-            document.getElementById('productsList').style.opacity = '0.5';
+        let editingVideoId = null;
 
+        function submitVideoForm(e) {
+            e.preventDefault();
+            const rawUrl = document.getElementById('v_url').value;
+            const embedUrl = getYoutubeEmbedUrl(rawUrl);
+            
+            if(!embedUrl) {
+                showToast('رابط يوتيوب غير صالح!', 'error');
+                return;
+            }
+
+            if(editingVideoId !== null) {
+                const index = currentVideos.findIndex(v => v.id === editingVideoId);
+                if(index !== -1) {
+                    currentVideos[index] = { id: editingVideoId, embedUrl: embedUrl, originalUrl: rawUrl };
+                    showToast('تم تعديل الفيديو، اضغط حفظ لنشره');
+                }
+                cancelEditVideo();
+            } else {
+                if(currentVideos.length >= MAX_VIDEOS) {
+                    showToast('وصلت للحد الأقصى للفيديوهات (2)', 'error');
+                    return;
+                }
+                const video = { id: Date.now(), embedUrl: embedUrl, originalUrl: rawUrl };
+                currentVideos.push(video);
+                showToast('تمت إضافة الفيديو، اضغط حفظ لنشره');
+                document.getElementById('addVideoForm').reset();
+            }
+            renderVideos();
+        }
+
+        function editVideo(id) {
+            const video = currentVideos.find(v => v.id === id);
+            if(!video) return;
+
+            editingVideoId = id;
+            let urlToEdit = video.originalUrl;
+            if(!urlToEdit) {
+                const match = video.embedUrl.match(/\/embed\/([^?]+)/);
+                urlToEdit = match ? `https://www.youtube.com/watch?v=${match[1]}` : video.embedUrl;
+            }
+            document.getElementById('v_url').value = urlToEdit;
+
+            document.getElementById('video-form-title').innerHTML = '<i class="fa-solid fa-pen text-blue-500"></i> تعديل فيديو';
+            const btnAdd = document.getElementById('btn-add-video');
+            btnAdd.innerHTML = '<i class="fa-solid fa-pen"></i> تحديث الفيديو';
+            btnAdd.classList.replace('bg-red-600', 'bg-blue-600');
+            btnAdd.classList.replace('hover:bg-red-700', 'hover:bg-blue-700');
+            
+            document.getElementById('btn-cancel-edit-video').classList.remove('hidden');
+        }
+
+        function cancelEditVideo() {
+            editingVideoId = null;
+            document.getElementById('addVideoForm').reset();
+            
+            document.getElementById('video-form-title').innerHTML = '<i class="fa-solid fa-video text-brand-500"></i> إضافة فيديو';
+            const btnAdd = document.getElementById('btn-add-video');
+            btnAdd.innerHTML = '<i class="fa-brands fa-youtube"></i> إضافة الفيديو';
+            btnAdd.classList.replace('bg-blue-600', 'bg-red-600');
+            btnAdd.classList.replace('hover:bg-blue-700', 'hover:bg-red-700');
+            
+            document.getElementById('btn-cancel-edit-video').classList.add('hidden');
+            renderVideos();
+        }
+
+        function removeVideo(id) {
+            if(confirm('هل أنت متأكد من حذف هذا الفيديو؟\n\nتنبيه: لا تنس الضغط على زر "حفظ ونشر للتطبيق" بعد الحذف.')) {
+                currentVideos = currentVideos.filter(v => v.id !== id);
+                if(editingVideoId === id) cancelEditVideo();
+                renderVideos();
+                showToast('تم الإزالة (اضغط حفظ لتأكيد الحذف)', 'success');
+            }
+        }
+
+        function renderVideos() {
+            const list = document.getElementById('videosList');
+            const empty = document.getElementById('noVideos');
+            const counter = document.getElementById('videos-counter');
+            const btnAdd = document.getElementById('btn-add-video');
+            
+            counter.innerText = `${currentVideos.length}/${MAX_VIDEOS}`;
+            
+            if(editingVideoId === null) {
+                btnAdd.disabled = currentVideos.length >= MAX_VIDEOS;
+                if(btnAdd.disabled) btnAdd.classList.replace('bg-red-600', 'bg-gray-400');
+                else btnAdd.classList.replace('bg-gray-400', 'bg-red-600');
+            }
+
+            list.innerHTML = '';
+            if(currentVideos.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            empty.classList.add('hidden');
+            currentVideos.forEach(v => {
+                const isEditing = v.id === editingVideoId;
+                list.innerHTML += `
+                    <div class="border ${isEditing ? 'border-blue-400 bg-blue-50' : 'border-gray-200 bg-gray-50'} rounded-lg p-2 flex flex-col gap-2 transition-colors">
+                        <iframe width="100%" height="150" src="${v.embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen class="rounded-md bg-black"></iframe>
+                        <div class="flex gap-2">
+                            <button onclick="editVideo(${v.id})" class="bg-blue-100 text-blue-600 hover:bg-blue-200 py-1.5 px-3 rounded flex-1 transition-colors text-sm font-bold"><i class="fa-solid fa-pen"></i> تعديل</button>
+                            <button onclick="removeVideo(${v.id})" class="bg-red-100 text-red-600 hover:bg-red-200 py-1.5 px-3 rounded flex-1 transition-colors text-sm font-bold"><i class="fa-solid fa-trash"></i> حذف</button>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        function getYoutubeEmbedUrl(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+        }
+
+        function saveSettings() {
+            const settings = {
+                wa_order: document.getElementById('set_wa_order').value,
+                website: document.getElementById('set_website').value,
+                android: document.getElementById('set_android').value,
+                catalog: document.getElementById('set_catalog').value,
+                facebook: document.getElementById('set_facebook').value,
+                instagram: document.getElementById('set_instagram').value,
+                wa_channel: document.getElementById('set_wa_channel').value,
+                wa_group: document.getElementById('set_wa_group').value,
+                youtube: document.getElementById('set_youtube').value,
+                tiktok: document.getElementById('set_tiktok').value,
+                snapchat: document.getElementById('set_snapchat').value,
+                x: document.getElementById('set_x').value,
+                email: document.getElementById('set_email').value,
+                enable_reviews: document.getElementById('set_enable_reviews').checked,
+                featured_video_url: document.getElementById('set_featured_video_url').value,
+                featured_video_text: document.getElementById('set_featured_video_text').value
+            };
+            saveData('saveSettings', settings);
+        }
+
+        function saveData(action, dataObj) {
+            document.body.style.cursor = 'wait';
+            
             const formData = new URLSearchParams();
-            formData.append('action', 'saveProducts');
-            formData.append('data', JSON.stringify(currentProducts));
+            formData.append('action', action);
+            formData.append('data', JSON.stringify(dataObj));
 
             fetch(SCRIPT_URL, {
                 method: 'POST',
                 body: formData,
-                mode: 'no-cors' // نتخطى منع المتصفح، ولكن لا يمكن قراءة الرد
+                mode: 'no-cors'
             }).then(() => {
                 setTimeout(() => {
-                    loading.classList.add('hidden');
-                    document.getElementById('productsList').style.opacity = '1';
-                    showToast('تم حفظ ونشر المنتجات بنجاح لصفحة البايو!', 'success');
-                }, 1500); // محاكاة الانتظار لأن no-cors لا يرجع رسالة صريحة
+                    document.body.style.cursor = 'default';
+                    showToast('تم الحفظ والنشر بنجاح!', 'success');
+                }, 1500);
             }).catch(() => {
-                loading.classList.add('hidden');
-                document.getElementById('productsList').style.opacity = '1';
-                showToast('حدث خطأ أثناء النشر، حاول مجدداً', 'error');
+                document.body.style.cursor = 'default';
+                showToast('حدث خطأ أثناء الاتصال', 'error');
             });
+        }
+
+        // تصدير إكسل احترافي باستخدام SheetJS
+        function exportToExcel(type) {
+            if(typeof XLSX === 'undefined') {
+                showToast('مكتبة التصدير قيد التحميل، يرجى المحاولة بعد قليل...', 'error');
+                return;
+            }
+
+            let dataToExport = [];
+            let sheetName = '';
+            let filename = '';
+
+            if(type === 'orders') {
+                if(currentOrders.length === 0) { showToast('لا توجد طلبات لتصديرها', 'error'); return; }
+                dataToExport = currentOrders.map(o => ({
+                    'تاريخ الطلب': o.date || '-',
+                    'المنتج المطلوب': o.product || '-',
+                    'الكمية': o.quantity || 1,
+                    'رقم هاتف العميل': o.phone || '-',
+                    'العنوان بالتفصيل': o.address || '-'
+                }));
+                sheetName = 'الطلبات';
+                filename = 'طلبات_مذكور_ستور.xlsx';
+            } else if(type === 'reviews') {
+                if(currentReviews.length === 0) { showToast('لا توجد تقييمات لتصديرها', 'error'); return; }
+                dataToExport = currentReviews.map(r => ({
+                    'تاريخ التقييم': r.date || '-',
+                    'اسم العميل': r.name || 'عميل',
+                    'التقييم (من 5)': r.rating || 0,
+                    'الملاحظة': r.comment || '-'
+                }));
+                sheetName = 'التقييمات';
+                filename = 'تقييمات_مذكور_ستور.xlsx';
+            }
+
+            // إنشاء ملف الإكسل
+            const ws = XLSX.utils.json_to_sheet(dataToExport);
+            
+            // ضبط اتجاه الورقة من اليمين لليسار (RTL)
+            if(!ws['!dir']) ws['!dir'] = 'rtl';
+
+            // ضبط عرض الأعمدة لتبدو احترافية
+            const wscols = type === 'orders' ? 
+                [{wch: 20}, {wch: 30}, {wch: 10}, {wch: 20}, {wch: 40}] : 
+                [{wch: 20}, {wch: 25}, {wch: 15}, {wch: 50}];
+            ws['!cols'] = wscols;
+
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, sheetName);
+            
+            // تحميل الملف
+            XLSX.writeFile(wb, filename);
+            showToast('تم تصدير ملف الإكسل بنجاح!', 'success');
         }
     </script>
 </body>
