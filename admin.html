@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة تحكم | مذكور ستور</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { cairo: ['Cairo', 'sans-serif'] },
+                    colors: { brand: { 500: '#ffac1b', 600: '#ff8c00' } }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f3f4f6; }
+        .spinner { border: 4px solid rgba(0,0,0,0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: #ff8c00; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #toast-msg {
+            visibility: hidden;
+            min-width: 250px;
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 12px 20px;
+            position: fixed;
+            z-index: 1000;
+            left: 50%;
+            bottom: 30px;
+            transform: translateX(-50%);
+            font-size: 14px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: opacity 0.3s, bottom 0.3s, visibility 0.3s;
+        }
+        #toast-msg.show { visibility: visible; opacity: 1; bottom: 50px; }
+        .tab-btn.active { border-bottom: 4px solid #ff8c00; color: #ff8c00; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <nav class="bg-white shadow-md px-6 py-4 flex flex-col md:flex-row justify-between items-center border-b-4 border-brand-500 gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-brand-500 flex items-center justify-center text-white text-2xl shadow-md">
+                <i class="fa-solid fa-store"></i>
+            </div>
+            <div>
+                <h1 class="font-bold text-2xl leading-tight">مذكور ستور</h1>
+                <p class="text-sm text-gray-500 font-semibold">إدارة النظام والمنتجات</p>
+            </div>
+        </div>
+        
+        <div class="flex bg-gray-50 rounded-lg p-1 border border-gray-200">
+            <button onclick="switchTab('orders')" id="tab-orders" class="tab-btn active px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100">
+                <i class="fa-solid fa-inbox ml-1"></i> الطلبات الواردة
+            </button>
+            <button onclick="switchTab('products')" id="tab-products" class="tab-btn px-6 py-2 rounded-md font-bold text-gray-600 transition-colors hover:bg-gray-100">
+                <i class="fa-solid fa-crown ml-1"></i> إدارة المنتجات
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto p-6">
+        
+        <!-- قسم الطلبات -->
+        <div id="content-orders" class="tab-content active bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
+                <h2 class="font-bold text-lg"><i class="fa-solid fa-box-open text-brand-500"></i> أحدث الطلبات المستلمة</h2>
+                <div class="flex items-center gap-3">
+                    <span class="bg-green-100 text-green-700 text-sm font-bold px-3 py-1 rounded-full" id="ordersCount">0 طلب</span>
+                    <button onclick="fetchOrders()" class="bg-brand-500 hover:bg-brand-600 text-white px-3 py-1 rounded-lg text-sm font-bold shadow-sm transition-colors">
+                        <i class="fa-solid fa-rotate"></i> تحديث
+                    </button>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <div id="loadingState" class="flex flex-col items-center justify-center py-10">
+                    <div class="spinner mb-4"></div>
+                    <p class="text-gray-500 font-semibold text-sm">جاري الجلب من قاعدة البيانات...</p>
+                </div>
+
+                <div id="emptyState" class="text-center py-10 hidden">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400 text-2xl"><i class="fa-solid fa-inbox"></i></div>
+                    <h3 class="font-bold text-gray-700">لا توجد طلبات بعد</h3>
+                </div>
+
+                <div class="overflow-x-auto hidden" id="ordersTableContainer">
+                    <table class="w-full text-sm text-right">
+                        <thead class="bg-gray-100 text-gray-600 font-bold">
+                            <tr>
+                                <th class="px-4 py-3 rounded-tr-lg">التاريخ والوقت</th>
+                                <th class="px-4 py-3">المنتج والكمية</th>
+                                <th class="px-4 py-3">رقم العميل</th>
+                                <th class="px-4 py-3">العنوان</th>
+                                <th class="px-4 py-3 rounded-tl-lg text-center">تواصل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ordersTableBody" class="divide-y divide-gray-200">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- قسم المنتجات -->
+        <div id="content-products" class="tab-content">
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- إضافة منتج جديد -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-1 h-fit">
+                    <h2 class="font-bold text-lg mb-4"><i class="fa-solid fa-plus text-brand-500"></i> إضافة منتج للصفحة</h2>
+                    <form id="addProductForm" onsubmit="addProduct(event)" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">اسم المنتج *</label>
+                            <input type="text" id="p_name" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">السعر (نصي) *</label>
+                            <input type="text" id="p_price" required placeholder="مثال: 15,000 ريال" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-brand-500 focus:border-brand-500">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">رابط الصورة (URL) *</label>
+                            <input type="url" id="p_img" required placeholder="https://..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
+                            <p class="text-xs text-gray-500 mt-1">يجب أن يكون رابط مباشر للصورة.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold text-gray-700 mb-1">رابط عند الضغط *</label>
+                            <input type="url" id="p_url" required placeholder="رابط الواتساب أو المتجر..." class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-left focus:ring-brand-500 focus:border-brand-500" dir="ltr">
+                        </div>
+                        <button type="submit" class="w-full bg-brand-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg transition-colors">
+                            إضافة للقائمة
+                        </button>
+                    </form>
+                </div>
+
+                <!-- قائمة المنتجات الحالية -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200 lg:col-span-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-bold text-lg"><i class="fa-solid fa-list text-brand-500"></i> المنتجات التي ستظهر في البايو</h2>
+                        <button onclick="saveProductsToDatabase()" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> حفظ ونشر للتطبيق
+                        </button>
+                    </div>
+                    
+                    <div id="productsLoading" class="hidden flex-col items-center py-5">
+                        <div class="spinner mb-2"></div>
+                    </div>
+
+                    <div id="productsList" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- سيتم عرض المنتجات هنا -->
+                    </div>
+                    <div id="noProducts" class="text-center py-10 text-gray-500 hidden font-semibold">
+                        لا توجد منتجات مضافة. قم بإضافة منتجات من القائمة الجانبية ثم اضغط على حفظ ونشر.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <div id="toast-msg"></div>
+
+    <script>
+        // الرابط المضمن الخاص بك (لا تغيره)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzuIKh_H3k3Ba8pqDNeftqwHmU32vywgZRTSEY6J6xEVvcjLdifHUJJO5Em5GGjcqoA/exec';
+        
+        let currentProducts = []; // مصفوفة لتخزين المنتجات
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast-msg');
+            toast.textContent = msg;
+            toast.style.backgroundColor = type === 'success' ? '#10b981' : '#ef4444';
+            toast.className = 'show';
+            setTimeout(() => { toast.className = toast.className.replace('show', ''); }, 3000);
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById('tab-' + tabId).classList.add('active');
+            document.getElementById('content-' + tabId).classList.add('active');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOrders();
+            fetchProducts();
+        });
+
+        /* ---- قسم الطلبات ---- */
+        function fetchOrders() {
+            document.getElementById('emptyState').classList.add('hidden');
+            document.getElementById('ordersTableContainer').classList.add('hidden');
+            document.getElementById('loadingState').classList.remove('hidden');
+
+            fetch(`${SCRIPT_URL}?action=getOrders`)
+                .then(res => res.json())
+                .then(data => {
+                    document.getElementById('loadingState').classList.add('hidden');
+                    if(data.status === 'success' && data.orders.length > 0) {
+                        document.getElementById('ordersCount').innerText = `${data.orders.length} طلب`;
+                        renderOrders(data.orders);
+                        document.getElementById('ordersTableContainer').classList.remove('hidden');
+                    } else {
+                        document.getElementById('ordersCount').innerText = `0 طلب`;
+                        document.getElementById('emptyState').classList.remove('hidden');
+                    }
+                }).catch(() => {
+                    document.getElementById('loadingState').classList.add('hidden');
+                    showToast('خطأ في الاتصال بقاعدة البيانات', 'error');
+                });
+        }
+
+        function renderOrders(orders) {
+            const tbody = document.getElementById('ordersTableBody');
+            tbody.innerHTML = '';
+            orders.forEach(order => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="px-4 py-4 text-gray-500 text-xs font-semibold" dir="ltr">${order.date || '-'}</td>
+                    <td class="px-4 py-4">
+                        <div class="font-bold text-gray-800">${order.product || '-'}</div>
+                        <div class="text-xs text-brand-600 font-bold bg-brand-50 inline-block px-2 py-0.5 rounded mt-1">الكمية: ${order.quantity || 1}</div>
+                    </td>
+                    <td class="px-4 py-4 font-bold text-gray-700" dir="ltr">${order.phone || '-'}</td>
+                    <td class="px-4 py-4 text-gray-600 max-w-xs truncate" title="${order.address || ''}">${order.address || '-'}</td>
+                    <td class="px-4 py-4 text-center">
+                        <a href="https://wa.me/967${order.phone ? order.phone.replace(/^0+/, '') : ''}" target="_blank" class="text-[#25D366] bg-green-50 hover:bg-green-100 px-3 py-1.5 rounded-lg font-bold text-xs transition-colors inline-flex items-center gap-1">
+                            <i class="fa-brands fa-whatsapp"></i> تواصل
+                        </a>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        /* ---- قسم المنتجات ---- */
+        function fetchProducts() {
+            fetch(`${SCRIPT_URL}?action=getProducts`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.status === 'success' && data.products) {
+                        currentProducts = data.products;
+                        renderProducts();
+                    }
+                });
+        }
+
+        function addProduct(e) {
+            e.preventDefault();
+            const product = {
+                id: Date.now(),
+                name: document.getElementById('p_name').value,
+                price: document.getElementById('p_price').value,
+                image: document.getElementById('p_img').value,
+                link: document.getElementById('p_url').value
+            };
+            currentProducts.push(product);
+            renderProducts();
+            document.getElementById('addProductForm').reset();
+            showToast('تمت إضافة المنتج للقائمة، اضغط "حفظ ونشر" لتأكيد التغييرات.');
+        }
+
+        function removeProduct(id) {
+            currentProducts = currentProducts.filter(p => p.id !== id);
+            renderProducts();
+        }
+
+        function renderProducts() {
+            const list = document.getElementById('productsList');
+            const empty = document.getElementById('noProducts');
+            list.innerHTML = '';
+            
+            if(currentProducts.length === 0) {
+                empty.classList.remove('hidden');
+                return;
+            }
+            
+            empty.classList.add('hidden');
+            currentProducts.forEach(p => {
+                list.innerHTML += `
+                    <div class="border border-gray-200 rounded-lg p-3 flex gap-3 bg-gray-50 items-center">
+                        <img src="${p.image}" class="w-16 h-16 object-cover rounded-md border border-gray-300" onerror="this.src='https://placehold.co/150x150/eee/999?text=Error'">
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-sm text-gray-800">${p.name}</h4>
+                            <p class="text-xs text-brand-600 font-bold">${p.price}</p>
+                        </div>
+                        <button onclick="removeProduct(${p.id})" class="text-red-500 hover:bg-red-100 p-2 rounded-lg transition-colors" title="حذف">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function saveProductsToDatabase() {
+            const loading = document.getElementById('productsLoading');
+            loading.classList.remove('hidden');
+            document.getElementById('productsList').style.opacity = '0.5';
+
+            const formData = new URLSearchParams();
+            formData.append('action', 'saveProducts');
+            formData.append('data', JSON.stringify(currentProducts));
+
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData,
+                mode: 'no-cors' // نتخطى منع المتصفح، ولكن لا يمكن قراءة الرد
+            }).then(() => {
+                setTimeout(() => {
+                    loading.classList.add('hidden');
+                    document.getElementById('productsList').style.opacity = '1';
+                    showToast('تم حفظ ونشر المنتجات بنجاح لصفحة البايو!', 'success');
+                }, 1500); // محاكاة الانتظار لأن no-cors لا يرجع رسالة صريحة
+            }).catch(() => {
+                loading.classList.add('hidden');
+                document.getElementById('productsList').style.opacity = '1';
+                showToast('حدث خطأ أثناء النشر، حاول مجدداً', 'error');
+            });
+        }
+    </script>
+</body>
+</html>
