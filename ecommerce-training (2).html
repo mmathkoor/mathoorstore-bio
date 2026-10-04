@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>دليلك الشامل للتجارة الإلكترونية</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+:root{--u:12px;--g:#f5a623;--n:#0b1b3a;--n2:#14305c;--t:#e8eefc;--m:#a3b3d1}
+*{box-sizing:border-box;letter-spacing:0!important}
+html,body{height:100%;margin:0;background:#050d20;color:var(--t);font-family:'Tajawal',sans-serif;overflow:hidden}
+#top{position:fixed;inset:0 0 auto 0;height:48px;z-index:5}
+#stage{position:fixed;inset:48px 0 56px 0;perspective:1600px;overflow:hidden}
+#bar{position:fixed;inset:auto 0 0 0;height:56px;z-index:5}
+.slide{position:absolute;inset:6px;border-radius:18px;display:flex;flex-direction:column;overflow:hidden;opacity:0;pointer-events:none;
+ background:radial-gradient(#ffffff10 1px,transparent 1.6px) 0 0/22px 22px,radial-gradient(circle at 12% 0,#f5a62324,transparent 40%),linear-gradient(135deg,var(--n),var(--n2));border:1px solid #ffffff14;
+ transform:translate3d(-60%,0,-500px) rotateY(40deg) rotateZ(-4deg) scale(.7);transition:transform .9s cubic-bezier(.7,0,.2,1),opacity .6s}
+.slide.before{transform:translate3d(60%,0,-500px) rotateY(-40deg) rotateZ(4deg) scale(.7)}
+.slide.active{opacity:1;pointer-events:auto;transform:none}
+.sh{padding:clamp(14px,calc(var(--u)*2),28px) clamp(14px,calc(var(--u)*3),40px) 0}
+.chip{display:inline-block;background:#f5a62326;color:var(--g);border:1px solid #f5a62366;border-radius:99px;padding:2px 12px;font-size:clamp(11px,calc(var(--u)*1.1),14px);font-weight:700}
+h2{margin:8px 0 0;font-size:clamp(21px,calc(var(--u)*3.2),42px);font-weight:800;line-height:1.3}
+h2::after{content:'';display:block;width:64px;height:4px;border-radius:4px;background:var(--g);margin-top:10px}
+.sb{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:clamp(10px,calc(var(--u)*1.2),18px);padding:clamp(10px,calc(var(--u)*1.5),20px) clamp(14px,calc(var(--u)*3),40px)}
+.sb::before,.sb::after{content:'';margin:auto}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,calc(var(--u)*20)),1fr));gap:clamp(8px,calc(var(--u)*1.1),16px)}
+.cd{background:#ffffff0e;border:1px solid #ffffff1c;border-radius:14px;padding:clamp(11px,calc(var(--u)*1.3),20px)}
+.cd i{color:var(--g);font-size:clamp(15px,calc(var(--u)*1.6),23px);width:2.3em;height:2.3em;border-radius:50%;background:#f5a6221f;border:1px solid #f5a62344;display:grid;place-items:center;margin-bottom:8px}
+h3{margin:0 0 3px;font-size:clamp(15px,calc(var(--u)*1.7),22px);font-weight:700}
+p{margin:0;font-size:clamp(12.5px,calc(var(--u)*1.3),17px);line-height:1.75;color:var(--m)}
+p b{color:#fff}
+.st{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,calc(var(--u)*26)),1fr));gap:clamp(8px,calc(var(--u)*1.1),16px)}
+.st li{display:flex;gap:12px;align-items:flex-start;background:#ffffff0a;border-radius:14px;padding:clamp(10px,calc(var(--u)*1.2),18px);border-right:4px solid var(--g)}
+.st li>b{flex:none;width:clamp(28px,calc(var(--u)*2.8),38px);height:clamp(28px,calc(var(--u)*2.8),38px);border-radius:50%;background:var(--g);color:var(--n);display:grid;place-items:center;font-weight:800}
+.tp{display:flex;gap:12px;align-items:center;background:linear-gradient(90deg,#f5a62333,#f5a62310);border:1px solid #f5a62355;border-radius:14px;padding:clamp(10px,calc(var(--u)*1.2),18px)}
+.tp i{color:var(--g);font-size:clamp(18px,calc(var(--u)*2),28px)}.tp p{color:var(--t)}
+.sf{display:flex;justify-content:space-between;gap:10px;padding:8px clamp(14px,calc(var(--u)*3),40px);border-top:1px solid #ffffff18;font-size:clamp(10px,calc(var(--u)*1),13px);color:var(--m);background:#0000002e}
+.cv{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px}
+.cv h1{margin:0;font-size:clamp(28px,calc(var(--u)*5.4),70px);font-weight:800;line-height:1.3}
+.cv h1 span{color:var(--g)}.cv i.big{font-size:clamp(40px,calc(var(--u)*6),80px);color:var(--g)}
+.cv p{font-size:clamp(14px,calc(var(--u)*1.7),23px)}
+a.cd{display:block;color:inherit;text-decoration:none;transition:border-color .2s,background .2s}
+a.cd:hover,a.cd:focus-visible{border-color:var(--g);background:#f5a62320;outline:none}
+a.cd p:last-child{margin-top:6px}a.cd p b{color:var(--g)}
+/* animations */
+@keyframes pop{0%{opacity:0;transform:scale(.6)}70%{transform:scale(1.05)}100%{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes bnc{0%{opacity:0;transform:translateY(-30px)}55%{opacity:1;transform:translateY(8px)}75%{transform:translateY(-4px)}100%{transform:none}}
+.slide.active .a{animation:fade .7s both;animation-delay:calc(var(--i)*110ms + 500ms)}
+.slide.active .cd:nth-child(2n),.slide.active .st li:nth-child(2n){animation-name:pop}
+.slide.active .cd:nth-child(3n),.slide.active .st li:nth-child(3n){animation-name:bnc}
+.slide:not(.active) .a{opacity:0}
+@media(prefers-reduced-motion:reduce){.slide,.slide.active .a{transition:none;animation:none!important}}
+/* PDF mode */
+.slide.pdf{position:relative;inset:auto;width:1123px;height:794px;opacity:1;transform:none;transition:none;border-radius:0;border:0}
+.pdf .a{animation:none!important;opacity:1!important}.pdf .sb{overflow:hidden}
+.slide::before{content:'';position:absolute;inset:0 0 auto 0;height:4px;background:linear-gradient(270deg,var(--g),#f5a62300);z-index:1}
+.url{direction:ltr;text-align:right;color:var(--g)!important;font-weight:700;font-size:clamp(11px,calc(var(--u)*1.1),14px)!important;word-break:break-all}
+.pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:6px}
+.pills span{background:#ffffff12;border:1px solid #ffffff26;border-radius:99px;padding:6px 14px;font-size:clamp(12px,calc(var(--u)*1.2),16px);font-weight:700}
+.pills i{color:var(--g)}
+/* تخطيط PDF ثابت (A4 بالعرض) يُضبط تلقائياً حتى لا يتجاوز المحتوى الصفحة */
+.pdf .sh{padding:30px 48px 0}.pdf h2{font-size:calc(34px*var(--f,1))}.pdf .chip{font-size:13px}
+.pdf .sb{padding:calc(18px*var(--f,1)) 48px;gap:calc(14px*var(--f,1))}
+.pdf .g,.pdf .st{gap:calc(12px*var(--f,1))}
+.pdf .cd{padding:calc(16px*var(--f,1))}.pdf .st li{padding:calc(14px*var(--f,1))}
+.pdf h3{font-size:calc(18px*var(--f,1))}.pdf p{font-size:calc(14px*var(--f,1));line-height:1.7}
+.pdf .cd i{font-size:calc(17px*var(--f,1))}.pdf .st li>b{width:calc(34px*var(--f,1));height:calc(34px*var(--f,1))}
+.pdf .tp{padding:calc(14px*var(--f,1))}.pdf .url{font-size:12px!important}
+.pdf .sf{padding:10px 48px;font-size:12px}
+.pdf .cv h1{font-size:62px}.pdf .cv p{font-size:22px}.pdf .cv i.big{font-size:70px}.pdf .pills span{font-size:16px}
+#host{position:fixed;left:-12000px;top:0;width:1123px;height:794px;pointer-events:none}
+.btn{background:#ffffff14;border:1px solid #ffffff26;color:var(--t);border-radius:12px;height:38px;min-width:38px;padding:0 12px;cursor:pointer;font-family:inherit;font-weight:700}
+.btn:hover{background:#ffffff26}.gold{background:var(--g);color:var(--n);border:0}.gold:hover{background:#ffb93f}
+#prog{flex:1;height:6px;border-radius:9px;background:#ffffff1f;overflow:hidden}#fill{height:100%;width:0;background:var(--g);transition:width .5s}
+</style>
+</head>
+<body>
+<div id="top" class="flex items-center justify-between px-3">
+  <span class="font-bold text-sm"><i class="fa-solid fa-store" style="color:var(--g)"></i> دليلك الشامل للتجارة الإلكترونية</span>
+  <button id="pdfBtn" class="btn gold text-sm"><i class="fa-solid fa-file-pdf"></i> تنزيل PDF</button>
+</div>
+<div id="stage"></div>
+<div id="bar" class="flex items-center gap-3 px-3">
+  <button id="prev" class="btn" aria-label="السابق"><i class="fa-solid fa-chevron-right"></i></button>
+  <div id="prog"><div id="fill"></div></div>
+  <span id="cnt" class="text-sm font-bold" style="min-width:48px;text-align:center"></span>
+  <button id="next" class="btn gold" aria-label="التالي"><i class="fa-solid fa-chevron-left"></i></button>
+</div>
+<div id="host"></div>
+
+<script>
+// k: c=بطاقات، s=خطوات | [نوع، المحور، العنوان، العناصر، نصيحة/مثال]
+const card=([ic,a,b,u])=>{const T=u?`a href="${u}" target="_blank" rel="noopener"`:'div';
+ return `<${T} class="cd a"><i class="${ic.includes('brands')?'':'fa-solid '}${ic}"></i><h3>${a}</h3><p>${b}</p>${u?`<p class="url" dir="ltr">${u.replace(/^https?:\/\/(www\.)?/,'')} ↗</p>`:''}</${u?'a':'div'}>`};
+const W1='الأسبوع 1: الأساسيات';
+const D=[
+['c',W1,'ما هي التجارة الإلكترونية؟',[
+['fa-globe','التعريف','بيع وشراء المنتجات والخدمات عبر الإنترنت، من العرض حتى التسليم والدفع.'],
+['fa-hashtag','متجر على التواصل','صفحة أو حساب يعرض المنتجات ويستقبل الطلبات عبر واتساب أو الرسائل. أسهل بداية.'],
+['fa-laptop','متجر مستقل','موقع أو تطبيق خاص بك: تحكم كامل لكن يحتاج تجهيزاً وتكلفة.'],
+['fa-shop','الأسواق الإلكترونية','منصات تجمع بائعين كثيرين وتمنحك جمهوراً جاهزاً مقابل عمولة وشروط.'],
+['fa-boxes-packing','الوساطة (دروبشيبنج)','تبيع منتج مورّد دون تخزينه؛ الربح أقل والمسؤولية عن الجودة والتأخير عليك.'],
+['fa-download','المنتجات الرقمية','كورسات وتصاميم وخدمات تُسلَّم إلكترونياً دون شحن.']],
+'ابدأ بمتجر على التواصل الاجتماعي مع واتساب، ثم توسّع بعد أن تثبت أن منتجك يُباع.'],
+['s',W1,'رحلة الطلب من الألف إلى الياء',[
+['الظهور','العميل يرى منشوراً أو إعلاناً أو توصية.'],
+['الاستفسار','يسأل عن السعر والمقاس والتوصيل.'],
+['الإقناع والتأكيد','تجيب بوضوح، وتؤكد التفاصيل والعنوان.'],
+['التجهيز والتغليف','فحص المنتج وتغليف آمن ورقم طلب.'],
+['التوصيل والتحصيل','شركة نقل أو مندوب، ودفع عند الاستلام أو مسبقاً.'],
+['ما بعد البيع','متابعة وتقييم وحل أي مشكلة.']],
+'أي حلقة ضعيفة تكسر الرحلة كلها: إعلان ممتاز مع رد متأخر يعني عميلاً ضائعاً.'],
+['c',W1,'اختيار المنتج: ماذا أبيع؟',[
+['fa-puzzle-piece','يحل مشكلة','المنتج الذي يوفّر وقتاً أو مالاً أو راحة أسهل بيعاً.'],
+['fa-repeat','طلب متكرر','أطعمة وعناية وإكسسوارات تعيد العميل مراراً.'],
+['fa-percent','هامش جيد','يغطي التكلفة والتوصيل والإعلان ويترك ربحاً.'],
+['fa-box','سهل الشحن','خفيف وغير قابل للكسر وقليل المرتجعات.'],
+['fa-truck-ramp-box','مورد موثوق','يلتزم بالجودة والمواعيد ويقبل التجربة بكمية صغيرة.'],
+['fa-scale-balanced','نظامي ومسموح','تجنّب المنتجات الممنوعة أو المقلّدة التي تعرّضك للحظر والمساءلة.']],
+'ابدأ بكمية صغيرة لاختبار الطلب، ثم كرّر الشراء مما يُباع فعلاً.'],
+['s',W1,'تسعير المنتج خطوة بخطوة',[
+['احسب التكلفة الكاملة','سعر الشراء + التغليف + التوصيل + عمولات الدفع + الفاقد والمرتجعات.'],
+['أضف تكلفة الإعلان','وزّع الإنفاق الإعلاني على الطلبات التي جلبها.'],
+['قارن المنافسين','اطّلع على أسعارهم وعروضهم وما يقدمونه مع المنتج.'],
+['حدّد هامشك','هامش الربح = (السعر − التكلفة) ÷ السعر.'],
+['اختبر وعدّل','جرّب سعراً أو عرضاً مختلفاً وراقب الطلبات.']],
+'مثال افتراضي: تكلفة 4,000 + تغليف 200 + توصيل 500 + إعلان 800 = 5,500. بسعر 7,000 يكون الربح 1,500 أي نحو 21%. غيّر الأرقام بحسب منتجك.'],
+['c',W1,'هوية المتجر: كيف تبدو أمام العميل؟',[
+['fa-signature','الاسم','قصير وسهل النطق والكتابة بالعربي والإنجليزي ويعبّر عن نشاطك.'],
+['fa-pen-nib','الشعار','واضح على الجوال، ولا يُغيَّر كل فترة.'],
+['fa-palette','الألوان','لونان أو ثلاثة ثابتة في كل التصاميم.'],
+['fa-image','الصور','إضاءة جيدة وخلفية نظيفة وصور حقيقية للمنتج.'],
+['fa-id-card','النبذة','سطر يوضح ماذا تبيع ولمن وأين توصّل وكيف يطلب العميل.'],
+['fa-phone','بيانات التواصل','رقم واتساب مثبّت وساعات العمل ظاهرة.']],
+'الثبات يبني الثقة: العميل يتذكر المتجر الذي يراه بالشكل نفسه في كل مكان.'],
+['s',W1,'تجهيز حساباتك التجارية',[
+['أنشئ صفحة تجارية','صفحة فيسبوك باسم المتجر، لا حساباً شخصياً.'],
+['اربط حساب إنستغرام','حوّله إلى حساب احترافي (تجاري) واربطه بالصفحة.'],
+['فعّل واتساب بزنس','أضف اسم المتجر والنبذة والعنوان وساعات العمل.'],
+['أنشئ كتالوجاً','اعرض المنتجات بصور وأسعار وأوصاف موحدة.'],
+['أعدّ الردود السريعة','رد ترحيب وسعر وتوصيل ودفع واسترجاع.'],
+['افتح حساب الإعلانات','عبر Meta Business Suite عند الجاهزية فقط.']],
+'روابط البدء المباشرة في الشريحة التالية.'],
+['c',W1,'روابط المنصات: ابدأ من هنا',[
+['fa-store','Meta Business Suite','إدارة الصفحة والإنستغرام والرسائل والمنشورات من مكان واحد.','https://business.facebook.com'],
+['fa-rectangle-ad','مدير الإعلانات','إنشاء الحملات الممولة على فيسبوك وإنستغرام.','https://adsmanager.facebook.com'],
+['fa-whatsapp fa-brands','واتساب بزنس','التعريف بالتطبيق وأدواته للمتاجر.','https://business.whatsapp.com'],
+['fa-tiktok fa-brands','تيك توك للأعمال','إعلانات تيك توك وإدارة الحساب التجاري.','https://ads.tiktok.com'],
+['fa-snapchat fa-brands','سناب شات للإعلانات','حساب ومدير الإعلانات في سناب.','https://ads.snapchat.com'],
+['fa-telegram fa-brands','تلغرام','تنزيل التطبيق وإنشاء قناة للعروض.','https://telegram.org'],
+['fa-location-dot','ملف النشاط في جوجل','أظهر متجرك على الخرائط ونتائج البحث.','https://business.google.com'],
+['fa-chart-line','Google Trends','اعرف ما يبحث عنه الناس وفي أي موسم.','https://trends.google.com']],
+'الواجهات تتحدث باستمرار؛ إن تغيّر مكان زر فابحث باسم الأداة في مركز المساعدة الخاص بها.'],
+['c',W1,'أدوات مجانية تسهّل عملك',[
+['fa-pen-ruler','Canva','تصميم منشورات وشعارات وقصص بقوالب جاهزة.','https://www.canva.com'],
+['fa-film','CapCut','مونتاج فيديوهات قصيرة للريلز وتيك توك.','https://www.capcut.com'],
+['fa-magnifying-glass','مكتبة إعلانات ميتا','شاهد الإعلانات الفعّالة لدى المنافسين.','https://www.facebook.com/ads/library'],
+['fa-fire','مركز إبداع تيك توك','أفكار وفيديوهات رائجة للإلهام.','https://ads.tiktok.com/business/creativecenter'],
+['fa-table','Google Sheets','سجل الطلبات والمخزون والأرباح.','https://sheets.google.com'],
+['fa-cloud','Google Drive','احفظ صور المنتجات وملفاتك ونسخك الاحتياطية.','https://drive.google.com']],
+'سجّل طلباتك من اليوم الأول: التاريخ، العميل، المنتج، السعر، حالة التوصيل.'],
+['c',W1,'الدفع والتحصيل في اليمن',[
+['fa-money-bill-wave','الدفع عند الاستلام','يرفع الثقة لكنه يزيد خطر الرفض؛ أكّد الطلب هاتفياً قبل الشحن.'],
+['fa-building-columns','الحوالات والتحويل','مناسبة للطلبات الكبيرة؛ احفظ الإيصال وراجعه قبل التجهيز.'],
+['fa-mobile-screen','المحافظ الإلكترونية','وسيلة سريعة وشائعة؛ اذكر اسم الحساب بوضوح وتحقق من وصول المبلغ.'],
+['fa-handshake-simple','العربون','للمنتجات حسب الطلب: يحمي وقتك وتكلفة التصنيع.'],
+['fa-file-contract','سياسة واضحة','اكتب سياسة الدفع والاسترجاع في رسالة ثابتة تُرسل لكل عميل.'],
+['fa-shield-halved','الأمان','لا تشارك بيانات عملائك، ولا تطلب معلومات حساسة بلا حاجة.']],
+'الوسائل المتاحة تختلف بحسب المدينة وشركة التوصيل؛ اسأل شركاءك المحليين قبل إعلان الخيارات.'],
+['c',W1,'أخطاء المبتدئين وكيف تتجنبها',[
+['fa-boxes-stacked','شراء كمية كبيرة','اختبر بكمية صغيرة أولاً.'],
+['fa-calculator','نسيان التكاليف الخفية','أدرج التوصيل والمرتجعات والإعلان في التسعير.'],
+['fa-images','صور منقولة','صوّر منتجك بنفسك ليصدّقك العميل.'],
+['fa-hourglass-half','بطء الرد','العميل يسأل أكثر من متجر في الوقت نفسه.'],
+['fa-wand-magic-sparkles','وعود مبالغ فيها','عميل خُدع مرة لن يعود، وسيتحدث عنك.'],
+['fa-rocket','الإعلان قبل الجاهزية','جهّز الصفحة والردود والتوصيل أولاً.']],
+'اختبار الجاهزية: هل تستطيع تنفيذ 20 طلباً في يوم واحد بجودة؟'],
+['c','المحور 1: فهم السوق','السوق اليمني: ما الذي يميّزه؟',[
+['fa-whatsapp fa-brands','واتساب أولاً','قناة البيع والتواصل الأولى؛ العميل يريد رداً بشرياً سريعاً.'],
+['fa-hand-holding-dollar','الدفع','دفع عند الاستلام وحوالات ومحافظ إلكترونية؛ وضّح الخيارات المتاحة.'],
+['fa-shield-halved','الثقة','الخوف من الاحتيال هو العائق الأكبر؛ الصور الحقيقية والتقييمات تحسم القرار.'],
+['fa-truck-fast','التوصيل','التوصيل بين المحافظات تحدٍّ؛ حدّد السعر والمدة قبل الطلب.'],
+['fa-wifi','الإنترنت','السرعة محدودة؛ استخدم صوراً وفيديوهات خفيفة.'],
+['fa-tags','حساسية السعر','قدّم قيمة واضحة وليس تخفيضات فقط.']],
+'فرصتك: المتجر الذي يحل مشكلتي الثقة والتوصيل يتفوق على منافسيه حتى لو لم يكن الأرخص.'],
+['c','المحور 1: فهم السوق','أساسيات التسويق: المزيج التسويقي',[
+['fa-box-open','المنتج','ما المشكلة التي يحلها؟ وما الذي يميّزه عن غيره؟'],
+['fa-coins','السعر','احسب التكلفة والهامش والمنافسين، ثم سعّر بحسب القيمة.'],
+['fa-location-dot','التوزيع','أين يجدك العميل؟ واتساب، صفحة، موقع، ومناطق التوصيل.'],
+['fa-bullhorn','الترويج','المحتوى والإعلانات والعروض وكل ما يوصل رسالتك.'],
+['fa-headset','الخدمة','سرعة الرد وطريقة التعامل جزء من المنتج نفسه.'],
+['fa-star','الإثبات','تقييمات وصور تسليم وتجارب عملاء حقيقية.']],
+'تمرين سريع: قيّم متجرك من 10 في كل عنصر، وابدأ بتحسين أضعف عنصر.'],
+['s','المحور 1: فهم السوق','اعرف عميلك: ابنِ شخصية المشتري',[
+['من هو؟','العمر، المدينة، العمل، القدرة الشرائية.'],
+['ما مشكلته؟','ما الذي يدفعه للبحث عن منتجك الآن؟'],
+['ما مخاوفه؟','الجودة، الاحتيال، التأخير، الاسترجاع.'],
+['أين يقضي وقته؟','فيسبوك، تيك توك، واتساب، سناب شات؟'],
+['كيف يقرر؟','يسأل الأصدقاء؟ يقارن الأسعار؟ يطلب صوراً إضافية؟']],
+'مثال: متجر عطور — امرأة بين 25 و35 سنة، تشتري للمناسبات، تخاف من التقليد، فتحتاج صور عبوات أصلية وطريقة تحقق واضحة.'],
+['c','المحور 2: المحتوى','الكتابة التسويقية: معادلة AIDA',[
+['fa-eye','انتباه','عنوان يوقف التمرير: سؤال أو مشكلة أو رقم.'],
+['fa-lightbulb','اهتمام','اشرح كيف يخدم المنتج حياة العميل.'],
+['fa-heart','رغبة','دليل وتجارب وصور تثبت النتيجة.'],
+['fa-hand-pointer','إجراء','دعوة واحدة واضحة: اطلب الآن عبر واتساب.']],
+'قبل: «عسل سدر للبيع». بعد: «تعبت من العسل المغشوش؟ عسل سدر مع إمكانية الفحص عند الاستلام، والتوصيل خلال 3 أيام. اطلب الآن عبر واتساب».'],
+['c','المحور 2: المحتوى','قواعد كتابة منشور يبيع',[
+['fa-newspaper','عنوان قوي','أول سطر يقرر هل يكمل القارئ أم لا.'],
+['fa-comments','لغة العميل','لهجة بسيطة مفهومة بعيدة عن التعقيد.'],
+['fa-gift','الفائدة قبل الميزة','لا تقل «قماش قطني»، قل «يبقيك مرتاحاً في الصيف».'],
+['fa-list-check','فكرة لكل سطر','اكتب بجمل قصيرة ومسافات واضحة.'],
+['fa-circle-info','التفاصيل الحاسمة','السعر والتوصيل والاسترجاع واضحة دائماً.'],
+['fa-arrow-pointer','دعوة واحدة','لا تشتّت العميل بأكثر من إجراء.']],
+'معادلة بديلة PAS: المشكلة، ثم تضخيمها، ثم الحل. مثالها: «بشرتك جافة؟ كل يوم يزداد الأمر سوءاً… جرّب الكريم الذي يرطّب من أول استخدام».'],
+['c','المحور 2: المحتوى','خلطة المحتوى المتوازنة (نسب إرشادية)',[
+['fa-graduation-cap','تعليمي 40%','نصائح وطرق استخدام ومقارنات تبني الخبرة.'],
+['fa-camera','إثبات 25%','تقييمات وصور تسليم وقصص عملاء.'],
+['fa-face-smile','ترفيهي 20%','كواليس المتجر وفريق العمل ومواقف خفيفة.'],
+['fa-cart-shopping','بيعي 15%','عروض ومنتجات ودعوة مباشرة للشراء.']],
+'خطة أسبوعية مقترحة: 3 منشورات قيمة، ومنشور إثبات، ومنشوران بيعيان، وقصة يومية.'],
+['c','المحور 3: المنصات','المنصات واختلافاتها (1/2)',[
+['fa-facebook fa-brands','فيسبوك','<b>الجمهور:</b> واسع وكل الأعمار.<br><b>المحتوى:</b> منشورات وصور وفيديو وعروض.<br><b>الإعلان:</b> الأقوى استهدافاً للمبيعات والرسائل.'],
+['fa-instagram fa-brands','إنستغرام','<b>الجمهور:</b> شباب واهتمام بالشكل.<br><b>المحتوى:</b> صور جذابة وريلز وقصص.<br><b>الإعلان:</b> ممتاز للمنتجات المرئية.'],
+['fa-tiktok fa-brands','تيك توك','<b>الجمهور:</b> أصغر سناً.<br><b>المحتوى:</b> فيديو قصير عفوي وتجارب حقيقية.<br><b>الإعلان:</b> وصول واسع بتكلفة جيدة.']],
+'القاعدة: صمّم المحتوى لطبيعة كل منصة ولا تنسخ المنشور نفسه في كل مكان.'],
+['c','المحور 3: المنصات','المنصات واختلافاتها (2/2)',[
+['fa-whatsapp fa-brands','واتساب بزنس','<b>الدور:</b> إغلاق البيع.<br><b>الأدوات:</b> الكتالوج والردود السريعة والوسوم.<br><b>ملاحظة:</b> اجمع العملاء في قائمة بث.'],
+['fa-snapchat fa-brands','سناب شات','<b>الجمهور:</b> نشط لدى الشباب.<br><b>المحتوى:</b> لقطات يومية وعروض سريعة.<br><b>الإعلان:</b> مناسب للعروض الموسمية.'],
+['fa-telegram fa-brands','تلغرام','<b>الدور:</b> قناة عروض وكتالوجات كبيرة.<br><b>الميزة:</b> رسائل تصل للمشتركين بلا خوارزميات.']],
+'الرحلة المثالية: إعلان على فيسبوك أو تيك توك، ثم محادثة واتساب، ثم الطلب، ثم قائمة البث لإعادة الشراء.'],
+['s','المحور 4: الإعلانات الممولة','كيف تعمل الحملة الإعلانية؟',[
+['حدّد الهدف','وعي، تفاعل، رسائل، أو مبيعات؛ هدف واحد لكل حملة.'],
+['اختر الجمهور','الموقع، العمر، الاهتمامات، وجمهور مشابه لعملائك.'],
+['الميزانية والمدة','ابدأ بمبلغ صغير يومياً وزد تدريجياً عند ثبات النتائج.'],
+['صمّم الإعلان','صورة أو فيديو واضح، ونص مختصر، وزر دعوة.'],
+['قِس وحسّن','أوقف الضعيف وكبّر الناجح بخطوات صغيرة.']],
+'الإعلان لا يصلح متجراً بلا ثقة: جهّز صفحتك وردودك قبل أن تدفع أول ريال.'],
+['c','المحور 4: الإعلانات الممولة','هيكل الحملة وقواعد التجربة',[
+['fa-bullseye','الحملة','تحدد الهدف: رسائل أو مبيعات أو تفاعل.'],
+['fa-users','المجموعة الإعلانية','تحدد الجمهور والميزانية ومكان العرض.'],
+['fa-image','الإعلان','الصورة أو الفيديو والنص والزر.'],
+['fa-flask','قاعدة الاختبار','غيّر عنصراً واحداً في كل تجربة، وانتظر 3 إلى 4 أيام قبل الحكم.']],
+'ابدأ بـ 3 إعلانات و2 أو 3 جماهير، ثم احتفظ بأفضل مزيج.'],
+['c','المحور 4: الإعلانات الممولة','مؤشرات الأداء: ماذا نقيس؟',[
+['fa-arrow-pointer','CTR','نسبة النقر = النقرات ÷ مرات الظهور.'],
+['fa-hand-holding-dollar','CPC','تكلفة النقرة = الإنفاق ÷ النقرات.'],
+['fa-cart-shopping','CPA','تكلفة الطلب = الإنفاق ÷ عدد الطلبات.'],
+['fa-chart-line','ROAS','العائد = المبيعات ÷ الإنفاق الإعلاني.']],
+'مثال: أنفقت 10,000 وبعت بـ 40,000 فالعائد 4. لكن احسب الربح بعد التكلفة، فالعائد المرتفع لا يعني ربحاً دائماً.'],
+['c','المحور 5: خدمة العملاء','ما الذي يصنع تميّزاً في الخدمة؟',[
+['fa-bolt','سرعة','رد خلال دقائق في ساعات العمل، ورسالة تفيد بموعد الرد خارجها.'],
+['fa-face-smile','نبرة ودودة','خاطب العميل باحترام وتجنّب الردود الجافة.'],
+['fa-circle-check','معلومات كاملة','السعر والمقاس والتوصيل والاسترجاع في رد واحد.'],
+['fa-handshake','وعود تلتزم بها','لا تعد بما لا تستطيع تنفيذه.'],
+['fa-location-crosshairs','تتبع الطلب','أخبر العميل بكل مرحلة: تأكيد، شحن، وصول.'],
+['fa-message','ردود جاهزة','جهّز قوالب للأسئلة المتكررة وعدّلها بلمسة شخصية.']],
+'العميل الراضي لا يشتري مرة أخرى فقط، بل يرشّحك لأصدقائه.'],
+['s','المحور 5: خدمة العملاء','التعامل مع الشكاوى (LAST)',[
+['استمع','دعه يكمل دون مقاطعة، وأعد صياغة مشكلته.'],
+['اعتذر','اعتذر بصدق عن التجربة دون تبرير أو اتهام.'],
+['حُلّ','قدّم حلاً محدداً وموعداً: استبدال، استرجاع، أو تعويض.'],
+['اشكره وتابع','اشكره على الصبر وتواصل معه بعد الحل.']],
+'شكوى معالجة بشكل ممتاز قد تصنع ولاءً أقوى من تجربة بلا مشاكل.'],
+['c','المحور 5: خدمة العملاء','ما بعد البيع: حوّل المشتري إلى سفير',[
+['fa-heart','رسالة شكر','بعد التسليم بيوم: شكراً، وهل وصل كل شيء سليماً؟'],
+['fa-star','طلب تقييم','اطلب صورة أو رأياً، وأعد نشره بإذنه.'],
+['fa-rotate','إعادة الشراء','عرض مناسب أو تذكير عند قرب انتهاء المنتج.'],
+['fa-people-group','مجتمعك','قائمة بث أو مجموعة للعروض والنصائح.'],
+['fa-gift','الإحالة','مكافأة لمن يرشّح صديقاً.']],
+'جلب عميل جديد أغلى غالباً من إعادة البيع لعميل راضٍ.'],
+['s','التطبيق العملي','ورشة العمل: اصنع حملتك الأولى',[
+['شخصية المشتري','اكتب بطاقة العميل المثالي في خمسة أسطر.'],
+['منشور AIDA','اكتب منشوراً لمنتج واحد وفق المعادلة.'],
+['ثلاثة ردود','جهّز رداً للسعر والتوصيل والشكوى.'],
+['إعلان تجريبي','حدّد الهدف والجمهور والميزانية والمؤشر الذي ستقيسه.']],
+'شارك ما كتبته مع المدرب والمجموعة لتحصل على ملاحظات مباشرة.'],
+['s','خطة التنفيذ','خطة 30 يوماً للانطلاق',[
+['الأسبوع 1: الأساس','تحسين الصفحة والهوية والأسعار والتوصيل.'],
+['الأسبوع 2: المحتوى','تنفيذ الخلطة الأسبوعية وجمع التقييمات.'],
+['الأسبوع 3: الإعلان','إطلاق حملة صغيرة وتسجيل النتائج.'],
+['الأسبوع 4: التحسين','توسيع الناجح وإيقاف الضعيف وإطلاق قائمة البث.']],
+'قياس النجاح: عدد الرسائل، وعدد الطلبات، وتكلفة الطلب، ونسبة تكرار الشراء.']
+];
+const FOOT='إعداد وتدريب: مروان احمد مذكور | دليلك الشامل للتجارة الإلكترونية';
+const N=D.length+3;
+const foot=i=>`<div class="sf"><span>${FOOT}</span><span>${i+1} / ${N}</span></div>`;
+const tipH=t=>t?`<div class="tp a"><i class="fa-solid fa-lightbulb"></i><p>${t}</p></div>`:'';
+const head=(c,t)=>`<div class="sh"><span class="chip a">${c}</span><h2 class="a">${t}</h2></div>`;
+const body=([k,c,t,items,tip])=>head(c,t)+`<div class="sb">`+(k=='c'
+ ?`<div class="g">${items.map(card).join('')}</div>`
+ :`<ol class="st">${items.map(([a,b],n)=>`<li class="a"><b>${n+1}</b><div><h3>${a}</h3><p>${b}</p></div></li>`).join('')}</ol>`)+tipH(tip)+`</div>`;
+const cover=`<div class="sb"><div class="cv"><i class="fa-solid fa-store big a"></i><span class="chip a">دورة تدريبية متكاملة</span><h1 class="a">دليلك الشامل<br><span>للتجارة الإلكترونية</span></h1><p class="a">برنامج تدريبي لأصحاب المتاجر الإلكترونية في السوق اليمني، من الصفر حتى أول حملة</p><div class="pills a">${[['fa-seedling','الأساسيات'],['fa-pen-nib','المحتوى والمنصات'],['fa-bullseye','الإعلانات الممولة'],['fa-headset','خدمة العملاء']].map(([i,t])=>`<span><i class="fa-solid ${i}"></i> ${t}</span>`).join('')}</div></div></div>`;
+const agenda=head('خطة الدورة','خريطة الشهر التدريبي')+`<div class="sb"><ol class="st">${[['الأسبوع 1: الأساسيات','التجارة الإلكترونية، اختيار المنتج، التسعير، الهوية، الحسابات، الدفع، وروابط المنصات.'],['الأسبوع 2: العميل والمحتوى','المزيج التسويقي، شخصية المشتري، الكتابة التسويقية، والفروق بين المنصات.'],['الأسبوع 3: الإعلانات الممولة','بناء الحملة وقياس النتائج وتحسينها.'],['الأسبوع 4: الخدمة والتشغيل','خدمة العملاء، الشكاوى، ما بعد البيع، والتطبيق العملي وخطة الانطلاق.']].map(([a,b],n)=>`<li class="a"><b>${n+1}</b><div><h3>${a}</h3><p>${b}</p></div></li>`).join('')}</ol></div>`;
+const end=`<div class="sb"><div class="cv"><i class="fa-solid fa-rocket big a"></i><h1 class="a">ابدأ بخطوة واحدة اليوم</h1><p class="a">اختر نقطة واحدة من هذا الدليل وطبّقها على متجرك خلال 24 ساعة، ثم قِس النتيجة.</p><span class="chip a">شكراً لحضوركم</span></div></div>`;
+const pages=[cover,agenda,...D.map(body),end];
+
+const stage=document.getElementById('stage');
+pages.forEach((h,i)=>{const s=document.createElement('section');s.className='slide';s.innerHTML=h+foot(i);
+ s.querySelectorAll('.a').forEach((e,j)=>e.style.setProperty('--i',j));stage.appendChild(s)});
+const S=[...stage.children];let cur=0;
+function go(n){cur=Math.max(0,Math.min(S.length-1,n));
+ S.forEach((s,i)=>s.className='slide'+(i<cur?' before':i==cur?' active':''));
+ document.getElementById('fill').style.width=((cur+1)/S.length*100)+'%';
+ document.getElementById('cnt').textContent=(cur+1)+'/'+S.length;
+ S[cur].querySelector('.sb').scrollTop=0}
+const fit=()=>document.documentElement.style.setProperty('--u',Math.max(stage.clientWidth/100,3.9)+'px');
+addEventListener('resize',fit);fit();go(0);
+prev.onclick=()=>go(cur-1);next.onclick=()=>go(cur+1);
+addEventListener('keydown',e=>{if(e.key=='ArrowLeft'||e.key==' ')go(cur+1);if(e.key=='ArrowRight')go(cur-1)});
+let x0,y0;
+stage.addEventListener('touchstart',e=>{x0=e.touches[0].clientX;y0=e.touches[0].clientY},{passive:true});
+stage.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;
+ if(Math.abs(dx)>60&&Math.abs(dx)>Math.abs(dy)*1.3)go(dx>0?cur+1:cur-1)},{passive:true});
+
+// يصغّر الخطوط والمسافات تدريجياً حتى يتسع المحتوى داخل صفحة A4 دون قص
+function fitPdf(c){let f=1;const sb=c.querySelector('.sb');c.style.setProperty('--f',1);
+ while(sb.scrollHeight>sb.clientHeight+2&&f>.5){f-=.04;c.style.setProperty('--f',f.toFixed(2))}}
+// تصدير PDF بمقاس A4 بالعرض
+pdfBtn.onclick=async()=>{
+ const btn=pdfBtn,old=btn.innerHTML;btn.disabled=true;
+ try{
+  await document.fonts.ready;
+  const pdf=new window.jspdf.jsPDF({orientation:'landscape',unit:'mm',format:'a4'});
+  const host=document.getElementById('host');
+  for(let i=0;i<S.length;i++){
+   btn.textContent=`جارٍ التحويل ${i+1}/${S.length}`;
+   host.innerHTML='';
+   const c=S[i].cloneNode(true);c.className='slide pdf';host.appendChild(c);
+   c.querySelectorAll('.g').forEach(g=>{const n=g.children.length;g.style.gridTemplateColumns=`repeat(${n<=4?n:n<=6?3:4},1fr)`});
+   c.querySelectorAll('.st').forEach(o=>o.style.gridTemplateColumns='repeat(2,1fr)');
+   fitPdf(c);
+   await new Promise(r=>setTimeout(r,80));
+   const cv=await html2canvas(c,{scale:1.6,backgroundColor:'#0b1b3a',useCORS:true,width:1123,height:794,windowWidth:1123,windowHeight:794,scrollX:0,scrollY:0});
+   if(i)pdf.addPage();
+   pdf.addImage(cv.toDataURL('image/jpeg',.88),'JPEG',0,0,297,210);
+   const cr=c.getBoundingClientRect(),k=297/1123;
+   c.querySelectorAll('a.cd').forEach(a=>{const r=a.getBoundingClientRect();pdf.link((r.left-cr.left)*k,(r.top-cr.top)*k,r.width*k,r.height*k,{url:a.href})});
+  }
+  host.innerHTML='';pdf.save('دليلك-الشامل-للتجارة-الإلكترونية.pdf');
+ }catch(e){console.error(e);alert('تعذّر إنشاء الملف، حاول مرة أخرى.')}
+ btn.disabled=false;btn.innerHTML=old;
+};
+</script>
+</body>
+</html>
