@@ -1,0 +1,10 @@
+
+{
+  "redirects": [
+    {
+      "source": "/download",
+      "destination": "https://github.com/mmathkoor/mathoorstore-bio/releases/download/v1.0.0/Mazen.apk",
+      "permanent": false
+    }
+  ]
+}
